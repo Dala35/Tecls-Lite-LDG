@@ -1,253 +1,180 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tecla Premium - Respiração Guiada</title>
-<style>
-  body { margin:0; font-family: Arial, sans-serif; background:#f4f7fa; }
-  .sidebar { position: fixed; left:0; top:0; width:240px; height:100%; background:#34495e; color:white; padding-top:20px; }
-  .sidebar h2 { text-align:center; margin-bottom:30px; }
-  .sidebar a { display:block; padding:15px; color:white; text-decoration:none; margin:5px 0; border-radius:4px; }
-  .sidebar a:hover { background:#2c3e50; }
-  .main { margin-left:260px; padding:20px; }
-  .header { display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; }
-  .header h1 { margin:0; font-size:24px; }
-  .alert { padding:10px; background:#e74c3c; color:white; margin-bottom:10px; border-radius:5px; }
-  .card { background:white; padding:20px; border-radius:8px; margin-bottom:20px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-  table { width:100%; border-collapse: collapse; }
-  th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
-  input[type="text"] { width: 100%; padding:10px; margin-top:10px; font-size:16px; border:1px solid #ccc; border-radius:6px; }
-  button { padding:10px 20px; margin-top:10px; border:none; background:#4b9cd3; color:white; border-radius:6px; cursor:pointer; font-size:16px; }
-  canvas { background:white; border-radius:8px; padding:10px; }
-  .barras { display:flex; justify-content:space-between; margin-top:20px; }
-  .barra { background:#3498db; color:white; padding:10px; border-radius:6px; flex:1; margin:0 5px; text-align:center; cursor:pointer; transition:0.2s; }
-  .barra:hover { background:#2980b9; }
-  .respiracao { text-align:center; font-size:24px; margin-top:20px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tecla Premium</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#fff9f0; color:#333;}
+    header { text-align:center; padding:10px; background:#4b9cd3; color:white; border-radius:8px;}
+    .container { max-width:700px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+    select, input[type="text"] { width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px;}
+    button { background:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer;}
+    .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
+    .pictograma { flex:1 1 30%; background:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad;}
+    .pictograma:hover { background:#cde9fa;}
+    #saida { margin-top:20px; font-size:20px; color:#222; padding:10px; background:#e6f7ff; border-radius:8px;}
+    .alert { margin-top:15px; padding:10px; background:#ffcccc; border-radius:8px; font-weight:bold; color:#900;}
+    .barra-versoes { display:flex; justify-content:space-around; margin-top:15px;}
+    .barra { padding:10px; border-radius:8px; cursor:pointer; flex:1; text-align:center; margin:0 5px; color:white; font-weight:bold;}
+    .free { background:#4caf50;}
+    .intermediate { background:#ff9800;}
+    .premium { background:#f44336;}
+    .respiracao { margin-top:15px; font-size:18px; color:#007acc;}
+  </style>
 </head>
 <body>
+  <header>
+    <h1>🧠 Tecla Premium</h1>
+    <p>Interface bilíngue, pictogramas, fala, prevenção de crises e respiração guiada</p>
+  </header>
+  <div class="container">
+    <label for="idioma">🌍 Escolha o idioma:</label>
+    <select id="idioma">
+      <option value="pt-PT">Português</option>
+      <option value="en-US">English</option>
+    </select>
 
-<div class="sidebar">
-  <h2>Tecla Premium</h2>
-  <a href="#dashboard">Dashboard</a>
-  <a href="#logs">Logs</a>
-  <a href="#config">Configurações</a>
-  <a href="#versoes">Versões</a>
-  <a href="#bio">Biometria</a>
-  <a href="#resp">Respiração Guiada</a>
-</div>
+    <label for="entrada">💬 Digite ou fale o que deseja:</label>
+    <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
+    <button onclick="responder()">🔊 Falar</button>
+    <button onclick="falar()">🎙️ Falar com Tecla</button>
 
-<div class="main">
-  <div class="header">
-    <h1>Dashboard Interativo Avançado</h1>
-    <div>👤 Terapeuta</div>
-  </div>
-
-  <!-- Entrada de frases -->
-  <div class="card">
-    <h3>Entrada de Frase</h3>
-    <input type="text" id="entrada" placeholder="Digite a frase ou desejo da criança">
-    <button onclick="processarEntrada()">Enviar</button>
-  </div>
-
-  <!-- Alertas -->
-  <div id="alertas"></div>
-
-  <!-- Logs -->
-  <div class="card" id="logs">
-    <h3>Logs Detalhados</h3>
-    <table>
-      <thead>
-        <tr><th>Horário</th><th>Frase</th><th>Categoria</th><th>Alerta</th><th>Frequência</th><th>Respiração</th></tr>
-      </thead>
-      <tbody id="tabelaLogs"></tbody>
-    </table>
-  </div>
-
-  <!-- Gráfico de Emoções -->
-  <div class="card">
-    <h3>Resumo de Emoções</h3>
-    <canvas id="graficoEmocoes" width="400" height="200"></canvas>
-  </div>
-
-  <!-- Gráfico de Sinais Biométricos -->
-  <div class="card" id="bio">
-    <h3>Sinais Biométricos Simulados</h3>
-    <canvas id="graficoBio" width="400" height="200"></canvas>
-  </div>
-
-  <!-- Três Barras de Versões -->
-  <div class="card" id="versoes">
-    <h3>Versões da Tecla</h3>
-    <div class="barras">
-      <div class="barra" onclick="abrirVersao('https://exemplo.com/tecla_free.html')">Grátis</div>
-      <div class="barra" onclick="abrirVersao('https://exemplo.com/tecla_standard.html')">Standard</div>
-      <div class="barra" onclick="abrirVersao('https://exemplo.com/tecla_premium.html')">Premium</div>
+    <div class="pictogramas">
+      <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
+      <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
+      <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
+      <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
+      <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
+      <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
     </div>
+
+    <div class="barra-versoes">
+      <div class="barra free" onclick="selecionarVersao('free')">Gratuita</div>
+      <div class="barra intermediate" onclick="selecionarVersao('intermediate')">Intermediária</div>
+      <div class="barra premium" onclick="selecionarVersao('premium')">Premium</div>
+    </div>
+
+    <div id="saida"></div>
+    <div id="alertas"></div>
+    <div class="respiracao" id="respiracao"></div>
   </div>
 
-  <!-- Respiração Guiada -->
-  <div class="card" id="resp">
-    <h3>Respiração Guiada</h3>
-    <div class="respiracao" id="respiracao">Aguardando alerta...</div>
-    <button onclick="iniciarRespiracao()">Iniciar Exercício</button>
-  </div>
+  <script>
+    let dadosLogs = [];
+    let versaoAtual = 'free';
 
-</div>
+    function responder() {
+      const entrada = document.getElementById("entrada").value;
+      const idioma = document.getElementById("idioma").value;
+      let resposta = idioma === "pt-PT"
+        ? "Tecla disse: '" + entrada + "'. Vamos entender com carinho e atenção."
+        : "Tecla said: '" + entrada + "'. Let's listen with care and love.";
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-// Dados simulados
-let dadosLogs = [];
-const alertasDiv = document.getElementById('alertas');
+      document.getElementById("saida").innerText = resposta;
+      falarTexto(resposta, idioma);
 
-// Função simples de predição de crise com biometria
-function predicaoCrise(frase, freqCard, resp) {
-  const palavrasRisco = ['triste', 'dor', 'irritado', 'assustado', 'medo'];
-  const alertaFrase = palavrasRisco.some(p => frase.toLowerCase().includes(p));
-  const alertaBio = freqCard > 110 || resp > 25; // sinais de estresse
-  return alertaFrase || alertaBio;
-}
+      salvarFrase(entrada);
+      processarEntrada(entrada);
+    }
 
-// Função de categorização
-function categorizar(frase) {
-  const palavrasBrincar = ['brincar','jogar','divertir'];
-  const palavrasComer = ['comer','lanche','alimentar'];
-  const palavrasBanheiro = ['banheiro','ir ao banheiro'];
-  const palavrasFeliz = ['feliz','contente','sorrir'];
-  const palavrasTriste = ['triste','chorar','infeliz'];
-  
-  for(let p of palavrasBrincar) if(frase.toLowerCase().includes(p)) return 'Brincar';
-  for(let p of palavrasComer) if(frase.toLowerCase().includes(p)) return 'Necessidade';
-  for(let p of palavrasBanheiro) if(frase.toLowerCase().includes(p)) return 'Necessidade';
-  for(let p of palavrasFeliz) if(frase.toLowerCase().includes(p)) return 'Feliz';
-  for(let p of palavrasTriste) if(frase.toLowerCase().includes(p)) return 'Triste';
-  return 'Neutro';
-}
+    function falarTexto(texto, idioma){
+      const synth = window.speechSynthesis;
+      const utterThis = new SpeechSynthesisUtterance(texto);
+      utterThis.lang = idioma;
+      synth.speak(utterThis);
+    }
 
-// Processa entrada do usuário
-function processarEntrada() {
-  const entrada = document.getElementById('entrada').value;
-  if(!entrada) return;
+    function usarFrase(texto) {
+      document.getElementById("entrada").value = texto;
+      responder();
+    }
 
-  const hora = new Date().toLocaleTimeString();
-  const categoria = categorizar(entrada);
+    function salvarFrase(frase) {
+      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
+      historico.push(frase);
+      if(historico.length > 5) historico.shift();
+      localStorage.setItem("frasesTecla", JSON.stringify(historico));
+      dadosLogs.push({ frase, alerta: frase.includes('triste') || frase.includes('dor') });
+    }
 
-  // Biometrics simulados
-  const freqCard = Math.floor(Math.random() * 50) + 80; // 80-130 bpm
-  const resp = Math.floor(Math.random() * 15) + 10;     // 10-25 respirações/min
+    function falar() {
+      const idioma = document.getElementById("idioma").value;
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = idioma;
+      recognition.start();
 
-  const alerta = predicaoCrise(entrada, freqCard, resp);
+      recognition.onresult = function(event) {
+        const textoFalado = event.results[0][0].transcript;
+        document.getElementById("entrada").value = textoFalado;
+        responder();
+      };
+    }
 
-  // Salvar no log
-  dadosLogs.push({hora, frase:entrada, categoria, alerta, freqCard, resp});
-  atualizarLogs();
-  atualizarGrafico();
-  atualizarBio();
+    function processarEntrada(entrada){
+      const alertasDiv = document.getElementById("alertas");
 
-  // Exibir alerta
-  if(alerta){
-    const div = document.createElement('div');
-    div.className = 'alert';
-    div.innerText = `⚠️ Alerta de possível crise: "${entrada}" às ${hora} (Freq: ${freqCard} bpm, Resp: ${resp})`;
-    alertasDiv.appendChild(div);
-    falar(`Alerta! Possível crise detectada: ${entrada}`);
-    iniciarRespiracao(); // Inicia respiração guiada automaticamente
-  }
+      // Alerta imediato
+      if(entrada.includes('triste') || entrada.includes('dor')){
+        const div = document.createElement('div');
+        div.className = 'alert';
+        div.innerText = '⚠️ Alerta: A criança pode precisar de atenção imediata!';
+        alertasDiv.appendChild(div);
+        iniciarRespiracao();
+      }
 
-  document.getElementById('entrada').value='';
-}
+      // Predição preventiva
+      if(predicaoPreventiva()){
+        const div = document.createElement('div');
+        div.className = 'alert';
+        div.innerText = '⚠️ Possível crise iminente detectada! Antecipando prevenção.';
+        alertasDiv.appendChild(div);
+        falarTexto("Atenção! Possível crise iminente. Recomenda-se intervenção preventiva.", document.getElementById("idioma").value);
+        iniciarRespiracao();
+      }
+    }
 
-// Atualiza tabela de logs
-function atualizarLogs() {
-  const tabela = document.getElementById('tabelaLogs');
-  tabela.innerHTML = '';
-  dadosLogs.forEach(log=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${log.hora}</td><td>${log.frase}</td><td>${log.categoria}</td><td>${log.alerta ? '⚠️' : ''}</td><td>${log.freqCard}</td><td>${log.resp}</td>`;
-    tabela.appendChild(tr);
-  });
-}
+    function predicaoPreventiva() {
+      if(dadosLogs.length < 3) return false;
+      const ultimos = dadosLogs.slice(-3);
+      const risco = ultimos.filter(l => l.alerta).length;
+      return risco >= 2;
+    }
 
-// Fala em voz alta
-function falar(texto) {
-  const synth = window.speechSynthesis;
-  const utterThis = new SpeechSynthesisUtterance(texto);
-  utterThis.lang = 'pt-PT';
-  synth.speak(utterThis);
-}
+    function iniciarRespiracao(){
+      const respDiv = document.getElementById("respiracao");
+      let cont = 0;
+      respDiv.innerText = "🌀 Respire fundo...";
 
-// Gráfico de Emoções
-const ctxEmocoes = document.getElementById('graficoEmocoes').getContext('2d');
-const graficoEmocoes = new Chart(ctxEmocoes, {
-  type: 'bar',
-  data: {
-    labels: ['Feliz', 'Triste', 'Brincar', 'Necessidade', 'Neutro'],
-    datasets: [{
-      label: 'Ocorrências',
-      data: [0,0,0,0,0],
-      backgroundColor: ['#2ecc71','#e74c3c','#3498db','#f1c40f','#95a5a6']
-    }]
-  },
-  options: { responsive:true, plugins:{ legend:{ display:false } } }
-});
+      const intervalo = setInterval(() => {
+        const fases = ["Inspire... 🌬️","Segure... ✋","Expire... 💨","Segure... ✋"];
+        respDiv.innerText = fases[cont % 4];
+        cont++;
+        if(cont > 11) { // 3 ciclos
+          clearInterval(intervalo);
+          respDiv.innerText = "";
+        }
+      }, 2000);
+    }
 
-function atualizarGrafico() {
-  const contagem = {Feliz:0, Triste:0, Brincar:0, Necessidade:0, Neutro:0};
-  dadosLogs.forEach(log => contagem[log.categoria]++);
-  graficoEmocoes.data.datasets[0].data = Object.values(contagem);
-  graficoEmocoes.update();
-}
+    function selecionarVersao(versao){
+      versaoAtual = versao;
+      alert('Versão selecionada: ' + versao);
+      // futuramente aqui você pode controlar acessos e recursos
+    }
 
-// Gráfico de biometria
-const ctxBio = document.getElementById('graficoBio').getContext('2d');
-const graficoBio = new Chart(ctxBio, {
-  type:'line',
-  data: { labels:[], datasets:[
-    {label:'Frequência Cardíaca (bpm)', data:[], borderColor:'#e74c3c', fill:false},
-    {label:'Respiração (rpm)', data:[], borderColor:'#3498db', fill:false}
-  ]},
-  options:{ responsive:true, plugins:{ legend:{ display:true } } }
-});
-
-function atualizarBio() {
-  const hora = new Date().toLocaleTimeString();
-  graficoBio.data.labels.push(hora);
-  graficoBio.data.datasets[0].data.push(dadosLogs[dadosLogs.length-1].freqCard);
-  graficoBio.data.datasets[1].data.push(dadosLogs[dadosLogs.length-1].resp);
-
-  if(graficoBio.data.labels.length>10){
-    graficoBio.data.labels.shift();
-    graficoBio.data.datasets.forEach(d => d.data.shift());
-  }
-  graficoBio.update();
-}
-
-// Função abrir versão em nova aba
-function abrirVersao(url) {
-  window.open(url, '_blank');
-}
-
-// Respiração guiada
-let respInterval;
-function iniciarRespiracao() {
-  const el = document.getElementById('respiracao');
-  let fase = 0; // 0: inspirar, 1: segurar, 2: expirar
-  let contador = 4;
-
-  clearInterval(respInterval);
-  el.innerText = 'Preparar...';
-
-  setTimeout(() => {
-    respInterval = setInterval(() => {
-      if(fase === 0){ el.innerText = `Inspire: ${contador}`; contador--; if(contador===0){fase=1; contador=2;} }
-      else if(fase ===1){ el.innerText = `Segure: ${contador}`; contador--; if(contador===0){fase=2; contador=6;} }
-      else if(fase ===2){ el.innerText = `Expire: ${contador}`; contador--; if(contador===0){fase=0; contador=4;} }
-    }, 1000);
-  }, 2000);
-}
-</script>
-
+    window.onload = function() {
+      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
+      if(historico.length > 0){
+        const sugestoes = historico.map(frase => `<li onclick="document.getElementById('entrada').value='${frase}'">🔁 ${frase}</li>`).join('');
+        const lista = document.createElement("ul");
+        lista.innerHTML = `<strong>💡 Sugestões:</strong>` + sugestoes;
+        lista.style.listStyleType = "none";
+        lista.style.paddingLeft = "0";
+        lista.style.marginTop = "15px";
+        document.querySelector(".container").appendChild(lista);
+      }
+    };
+  </script>
 </body>
 </html>
