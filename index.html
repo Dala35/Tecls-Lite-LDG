@@ -1,119 +1,144 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tecla Premium Dinâmica</title>
-<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🧠 Tecla Lite Premium</title>
 <style>
-body{font-family:Arial,sans-serif;background:#fff9f0;padding:20px;color:#333;}
-.container{max-width:700px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.1);}
-button{background:#4b9cd3;color:white;padding:10px 15px;margin-top:10px;border:none;border-radius:8px;cursor:pointer;}
-.pictograma{display:inline-block;padding:10px;margin:5px;background:#e1f0fb;border-radius:8px;cursor:pointer;}
-.barra{margin-top:15px;padding:10px;background:#f0f0f0;border-radius:8px;}
+body { font-family: Comic Sans MS, Arial, sans-serif; margin:0; padding:20px; background:#fff9f0; color:#333; }
+header { text-align:center; padding:10px; background:#4b9cd3; color:white; border-radius:8px; }
+.container { max-width:650px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+select,input[type="text"]{width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px;}
+button{background:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer;}
+.pictogramas{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
+.pictograma{flex:1 1 30%; background:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad;}
+.pictograma:hover{background:#cde9fa;}
+#saida{margin-top:20px; font-size:20px; color:#222; padding:10px; background:#e6f7ff; border-radius:8px;}
+.barras {display:flex; justify-content:space-between; margin-top:20px;}
+.barra {flex:1; margin:0 5px; padding:10px; border-radius:8px; text-align:center; color:white;}
+.free {background:#7a7a7a;} .premium {background:#f39c12;} .paid {background:#27ae60;}
 </style>
 </head>
 <body>
+
+<header>
+<h1>🧠 Tecla Lite Premium</h1>
+<p>Ferramenta bilíngue com pictogramas e fala para crianças autistas</p>
+</header>
+
 <div class="container">
-<h1>🧠 Tecla Premium Dinâmica</h1>
 
-<h3>Login / Registro</h3>
-<input type="text" id="username" placeholder="Usuário"/>
-<input type="password" id="password" placeholder="Senha"/>
-<button onclick="register()">Registrar</button>
-<button onclick="login()">Login</button>
-
-<hr>
-<label>💬 Digite frase:</label>
-<input type="text" id="entrada"/>
-<button onclick="responder()">🔊 Falar</button>
-
-<div class="pictogramas">
-<div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
-<div class="pictograma" onclick="usarFrase('Estou feliz')">😊 Feliz</div>
-<div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
+<!-- Barras de acesso -->
+<div class="barras">
+  <div id="barraFree" class="barra free">FREE</div>
+  <div id="barraPremium" class="barra premium">PREMIUM</div>
+  <div id="barraPaid" class="barra paid">PAID</div>
 </div>
 
-<h3>Histórico</h3>
-<ul id="historico"></ul>
+<label for="idioma">🌍 Escolha o idioma:</label>
+<select id="idioma">
+<option value="pt-PT">Português</option>
+<option value="en-US">English</option>
+</select>
 
-<h3>Barras de Versões</h3>
-<div class="barra" id="gratuita"><strong>Gratuita</strong><ul></ul></div>
-<div class="barra" id="intermediaria"><strong>Intermediária</strong><ul></ul></div>
-<div class="barra" id="premium"><strong>Premium</strong><ul></ul></div>
+<label for="entrada">💬 Digite ou fale o que a criança deseja:</label>
+<input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
+<button onclick="responder()">🔊 Falar</button>
+<button onclick="falar()">🎙️ Falar com Tecla</button>
+<button id="btnAssinatura" onclick="comprarAssinatura()">💎 Assinar Premium</button>
+
+<div class="pictogramas">
+  <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
+  <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
+  <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
+  <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
+  <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
+  <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
+</div>
+
+<div id="saida"></div>
+
 </div>
 
 <script>
-const socket = io("http://localhost:5000");
-let token="";
-let userData={};
+// Simulação de usuário (no futuro conectar a backend)
+let userData = { level: 'free' }; // free, premium, paid
+const token = "simulacaoToken123"; // JWT simulado
 
-socket.on("barraAtualizada", ({ barra, link }) => {
-  const ul=document.querySelector("#"+barra+" ul");
-  const li=document.createElement("li");
-  li.innerHTML=`<a href="${link}" target="_blank">${link}</a>`;
-  ul.appendChild(li);
-  if(!userData.barras[barra]) userData.barras[barra]=[];
-  userData.barras[barra].push(link);
-});
+// Funções de Tecla
+function responder() {
+  const entrada = document.getElementById("entrada").value;
+  const idioma = document.getElementById("idioma").value;
+  let resposta = idioma === "pt-PT" ? 
+    `Tecla disse: '${entrada}'. Vamos entender com carinho e atenção.` : 
+    `Tecla said: '${entrada}'. Let's listen with care and love.`;
 
-function register(){
-  fetch("http://localhost:5000/register",{method:"POST",headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({username:document.getElementById("username").value,password:document.getElementById("password").value})})
-  .then(r=>r.json()).then(d=>alert(d.message));
+  document.getElementById("saida").innerText = resposta;
+  const synth = window.speechSynthesis;
+  const utterThis = new SpeechSynthesisUtterance(resposta);
+  utterThis.lang = idioma;
+  synth.speak(utterThis);
+
+  salvarFrase(entrada);
 }
 
-function login(){
-  fetch("http://localhost:5000/login",{method:"POST",headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({username:document.getElementById("username").value,password:document.getElementById("password").value})})
-  .then(r=>r.json()).then(d=>{
-    if(d.success){ token=d.token; userData=d.user; alert("Login ok"); carregarHistorico(); carregarBarras(); }
-    else alert(d.message);
-  });
-}
-
-function responder(){
-  const frase=document.getElementById("entrada").value;
-  falar(frase);
-  fetch("http://localhost:5000/historico",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token,frase})});
-  if(userData.historico.length>20) userData.historico.shift();
-  userData.historico.push(frase);
-  carregarHistorico();
-}
-
-function falar(frase){
-  const synth=window.speechSynthesis;
-  const utter=new SpeechSynthesisUtterance(frase);
-  utter.lang="pt-PT";
-  synth.speak(utter);
-}
-
-function usarFrase(frase){
-  document.getElementById("entrada").value=frase;
+function usarFrase(texto) {
+  document.getElementById("entrada").value = texto;
   responder();
 }
 
-function carregarHistorico(){
-  const ul=document.getElementById("historico");
-  ul.innerHTML="";
-  userData.historico.forEach(f=>{const li=document.createElement("li");li.innerText=f;ul.appendChild(li);});
+function salvarFrase(frase) {
+  let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
+  historico.push(frase);
+  if(historico.length>5) historico.shift();
+  localStorage.setItem("frasesTecla", JSON.stringify(historico));
 }
 
-function carregarBarras(){
-  ["gratuita","intermediaria","premium"].forEach(barra=>{
-    const ul=document.querySelector("#"+barra+" ul");
-    ul.innerHTML="";
-    if(!userData.barras[barra]) userData.barras[barra]=[];
-    userData.barras[barra].forEach(link=>{
-      const li=document.createElement("li");
-      li.innerHTML=`<a href="${link}" target="_blank">${link}</a>`;
-      ul.appendChild(li);
-    });
-  });
+function falar() {
+  const idioma = document.getElementById("idioma").value;
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = idioma;
+  recognition.start();
+
+  recognition.onresult = function(event) {
+    const textoFalado = event.results[0][0].transcript;
+    document.getElementById("entrada").value = textoFalado;
+    responder();
+  };
 }
+
+// Interface de Barras
+function atualizarBarras() {
+  document.getElementById("barraFree").style.opacity = userData.level==='free'?1:0.3;
+  document.getElementById("barraPremium").style.opacity = userData.level==='premium'?1:0.3;
+  document.getElementById("barraPaid").style.opacity = userData.level==='paid'?1:0.3;
+
+  document.getElementById("btnAssinatura").style.display = userData.level==='premium'?'none':'inline-block';
+}
+
+// Simula compra de assinatura
+async function comprarAssinatura() {
+  alert("Redirecionando para pagamento simulado...");
+  // No futuro, integração real com Stripe
+  userData.level='premium';
+  atualizarBarras();
+}
+
+// Carregar histórico
+window.onload = function() {
+  let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
+  if(historico.length > 0){
+    const sugestoes = historico.map(frase => `<li onclick="document.getElementById('entrada').value='${frase}'; responder();">🔁 ${frase}</li>`).join('');
+    const lista = document.createElement("ul");
+    lista.innerHTML = `<strong>💡 Sugestões:</strong>` + sugestoes;
+    lista.style.listStyleType="none";
+    lista.style.paddingLeft="0";
+    lista.style.marginTop="15px";
+    document.querySelector(".container").appendChild(lista);
+  }
+  atualizarBarras();
+};
 </script>
+
 </body>
 </html>
-
-
-
