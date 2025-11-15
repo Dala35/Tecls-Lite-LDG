@@ -1,462 +1,132 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tecla Premium - Dashboard Técnico</title>
-    <!-- Incluindo Font Awesome para ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* --- VARIÁVEIS CSS (PALETA TECLA) --- */
-        :root {
-            --color-primary: #4B9CD3; /* Azul Tecla (Cabeçalho, Interações) */
-            --color-background-soft: #FFF9F0; /* Creme Acolhedor (Fundo principal) */
-            --color-background-white: #FFFFFF; /* Branco (Container Principal) */
-            --color-text: #222222; /* Texto Padrão */
-            --color-dark-menu: #1e2a38; /* Fundo Menu Lateral */
-
-            /* Cores de Status e Emoções Refatoradas */
-            --color-status-alert: #A00000;      /* Alerta de Risco (Risco Alto) */
-            --color-status-alert-bg: #FFEBEB;   /* Fundo de Alerta */
-            
-            --color-emotion-happy: #2ecc71;     /* Feliz (Sucesso/Positivo) */
-            --color-emotion-sad: #e74c3c;       /* Triste (Risco Médio) */
-            --color-emotion-neutral: #f1c40f;   /* Neutra (Atenção/Warning) */
-            --color-emotion-calm: #1abc9c;      /* Calma (Estabilidade) - NOVO */
-            --color-emotion-play: #4B9CD3;      /* Brincar (Primário) */
-            --color-emotion-need: #9b59b6;      /* Necessidade (Prioridade) */
-
-            /* --- VARIÁVEIS DE LAYOUT E ESPAÇAMENTO --- */
-            --spacing-large: 25px;
-            --spacing-medium: 15px;
-            --border-radius-medium: 10px;
-            --shadow-soft: 0 8px 30px rgba(0,0,0,0.05);
-        }
-
-        /* --- BASE E TIPOGRAFIA --- */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Verdana', 'Open Sans', sans-serif;
-            background: var(--color-background-soft);
-            color: var(--color-text);
-            line-height: 1.6;
-            font-size: 16px;
-        }
-
-        /* --- SIDEBAR (MENU LATERAL FIXO) --- */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100%;
-            background: var(--color-dark-menu);
-            color: white;
-            padding: 30px 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-            z-index: 50;
-            box-sizing: border-box;
-        }
-        .sidebar h2 {
-            color: #bfe0ff;
-            text-align: left;
-            margin-top: 0;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 15px;
-            font-weight: bold;
-        }
-        .sidebar a {
-            display: block;
-            padding: 12px var(--spacing-medium);
-            color: #bfe0ff;
-            text-decoration: none;
-            margin: 8px 0;
-            border-radius: var(--border-radius-medium);
-            transition: background 0.2s, color 0.2s;
-        }
-        .sidebar a:hover, .sidebar a.active {
-            background: #2c3e50;
-            color: white;
-        }
-
-        /* --- CONTEÚDO PRINCIPAL --- */
-        .main-content {
-            margin-left: 250px; /* Espaço para o menu lateral */
-            padding: 20px;
-            padding-top: 40px;
-        }
-
-        /* --- CABEÇALHO DO MAIN (DASHBOARD HEADER) --- */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-large);
-            padding: 10px 0;
-            border-bottom: 2px solid #EEE;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 1.8em;
-            color: var(--color-primary);
-        }
-        .header div {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #555;
-        }
-
-        /* --- LAYOUT DO PAINEL DE CONTROLE (COLUNAS) --- */
-        .dashboard-layout {
-            display: flex;
-            gap: var(--spacing-large);
-            margin-bottom: var(--spacing-large);
-        }
-
-        .left-column {
-            flex: 2; /* 2/3 da largura */
-            min-width: 0;
-        }
-        
-        .right-column {
-            flex: 1; /* 1/3 da largura */
-            min-width: 0;
-        }
-
-        /* --- MINI-CARDS DE RESUMO --- */
-        .mini-card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: var(--spacing-medium);
-            margin-bottom: var(--spacing-large);
-        }
-        .mini-card {
-            background: var(--color-background-white);
-            padding: var(--spacing-medium);
-            border-radius: var(--border-radius-medium);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            text-align: center;
-            border: 1px solid #EFEFEF;
-        }
-        .mini-card p {
-            margin: 5px 0 0 0;
-            font-size: 0.9em;
-            color: #666;
-        }
-        .mini-card .value {
-            font-size: 2.2em;
-            font-weight: bold;
-            margin: 0;
-            line-height: 1.2;
-        }
-
-        /* --- CARDS E ALERTA (Geral) --- */
-        .card {
-            background: var(--color-background-white);
-            padding: var(--spacing-large);
-            border-radius: var(--border-radius-medium);
-            margin-bottom: var(--spacing-large);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: box-shadow 0.3s;
-        }
-        .card h3 {
-            border-bottom: 1px solid #EEE;
-            padding-bottom: 10px;
-            margin-top: 0;
-            color: #333;
-        }
-        .alert {
-            padding: var(--spacing-medium);
-            background: var(--color-status-alert-bg);
-            color: var(--color-status-alert);
-            margin-bottom: var(--spacing-medium);
-            border-radius: var(--border-radius-medium);
-            border-left: 8px solid var(--color-status-alert); /* Alerta de Crise */
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(255,90,90,0.1);
-        }
-
-        /* --- TABELA (LOGS) --- */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #F0F0F0;
-        }
-        th {
-            background: #fcfcfc;
-            font-weight: 600;
-            color: #555;
-            text-transform: uppercase;
-            font-size: 0.9em;
-        }
-        tr:nth-child(even) {
-            background-color: #f7faff; /* Listras suaves */
-        }
-        /* Cor de destaque para o Alerta na tabela e no resumo */
-        .alerta-true {
-            color: var(--color-status-alert);
-            font-weight: bold;
-        }
-        .valor-interacoes { color: var(--color-primary); }
-        .valor-alerta { color: var(--color-status-alert); }
-        
-        /* Cores dinâmicas para a Emoção Principal - Utilizando as novas variáveis */
-        .valor-emocao.Feliz { color: var(--color-emotion-happy); }
-        .valor-emocao.Triste { color: var(--color-emotion-sad); }
-        .valor-emocao.Neutra { color: var(--color-emotion-neutral); }
-        .valor-emocao.Brincar { color: var(--color-emotion-play); }
-        .valor-emocao.Necessidade { color: var(--color-emotion-need); }
-        .valor-emocao.Calma { color: var(--color-emotion-calm); } /* NOVO */
-        .valor-emocao { color: #555; }
-
-
-        /* --- RESPONSIVIDADE (MOBILE / TABLET) --- */
-        @media (max-width: 900px) {
-            .sidebar {
-                /* Sidebar fixo passa a ser estático e horizontal no mobile */
-                position: static; 
-                width: 100%;
-                height: auto;
-                padding: 15px 20px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                gap: 10px;
-            }
-            .sidebar h2 {
-                border-bottom: none;
-                padding-bottom: 0;
-                margin-bottom: 0;
-                flex-shrink: 0;
-            }
-            .sidebar a {
-                display: inline-block;
-                margin: 5px;
-                padding: 8px 12px;
-                font-size: 0.9em;
-                background: #2c3e50;
-            }
-            .main-content {
-                margin-left: 0; /* Remove o margin do sidebar */
-                padding-top: 20px;
-            }
-            
-            /* Colunas do Dashboard se empilham em telas pequenas */
-            .dashboard-layout {
-                flex-direction: column;
-            }
-
-            /* Ajuste para rolagem horizontal em tabelas grandes */
-            .card table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tecla Premium - Monitor de Crises</title>
+<style>
+  body { margin:0; font-family: Arial, sans-serif; background: #f4f7fa; }
+  .sidebar { position: fixed; left:0; top:0; width:220px; height:100%; background:#34495e; color:white; padding-top:20px;}
+  .sidebar h2 { text-align:center; margin-bottom:30px; }
+  .sidebar a { display:block; padding:15px; color:white; text-decoration:none; margin:5px 0; border-radius:4px;}
+  .sidebar a:hover { background:#2c3e50; }
+  .main { margin-left:240px; padding:20px; }
+  .header { display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; }
+  .header h1 { margin:0; font-size:24px; }
+  .alert { padding:10px; background:#e74c3c; color:white; margin-bottom:10px; border-radius:5px; }
+  .card { background:white; padding:20px; border-radius:8px; margin-bottom:20px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+  table { width:100%; border-collapse: collapse; }
+  th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
+  input[type="text"] { width: 100%; padding:10px; margin-top:10px; font-size:16px; border:1px solid #ccc; border-radius:6px; }
+  button { padding:10px 20px; margin-top:10px; border:none; background:#4b9cd3; color:white; border-radius:6px; cursor:pointer; font-size:16px; }
+</style>
 </head>
 <body>
 
-<!-- SIDEBAR (Menu de Navegação do Dashboard) -->
 <div class="sidebar">
-    <h2><i class="fas fa-brain"></i> Tecla Premium</h2>
-    <a href="#dashboard" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="#logs"><i class="fas fa-list-ul"></i> Logs</a>
-    <a href="#graficos"><i class="fas fa-chart-pie"></i> Gráficos</a>
-    <a href="#usuarios"><i class="fas fa-users"></i> Usuários</a>
-    <a href="#config"><i class="fas fa-cogs"></i> Configurações</a>
+  <h2>Tecla Premium</h2>
+  <a href="#dashboard">Dashboard</a>
+  <a href="#logs">Logs</a>
+  <a href="#config">Configurações</a>
 </div>
 
-<!-- CONTEÚDO PRINCIPAL DO DASHBOARD -->
-<div class="main-content">
-    <div class="header">
-        <h1>Dashboard Técnico</h1>
-        <!-- O ID do usuário será exibido aqui no futuro com a autenticação Firestore -->
-        <div><i class="fas fa-user-circle"></i> Terapeuta</div>
-    </div>
+<div class="main">
+  <div class="header">
+    <h1>Monitor de Crises</h1>
+    <div>👤 Terapeuta</div>
+  </div>
 
-    <!-- Alertas (Topo) -->
-    <div id="alertas"></div>
+  <!-- Input do usuário -->
+  <div class="card">
+    <h3>Entrada de Frase</h3>
+    <input type="text" id="entrada" placeholder="Digite a frase ou desejo da criança">
+    <button onclick="processarEntrada()">Enviar</button>
+  </div>
 
-    <!-- Mini-Cards de Resumo -->
-    <div class="mini-card-grid" id="dashboard">
-        <!-- Total de Interações -->
-        <div class="mini-card">
-            <p>Total de Interações</p>
-            <p class="value valor-interacoes" id="totalInteracoes">0</p>
-        </div>
+  <!-- Alertas -->
+  <div id="alertas"></div>
 
-        <!-- Alertas de Risco -->
-        <div class="mini-card">
-            <p>Alertas de Risco Hoje</p>
-            <p class="value valor-alerta" id="totalAlertas">0</p>
-        </div>
-
-        <!-- Emoção Predominante (Este será preenchido pelo JS) -->
-        <div class="mini-card">
-            <p>Emoção Principal</p>
-            <!-- A classe dinâmica e o conteúdo serão setados via JS -->
-            <p class="value valor-emocao" id="emocaoPrincipal">--</p>
-        </div>
-    </div>
-
-    <!-- Layout de Colunas (Gráficos e Logs) -->
-    <div class="dashboard-layout">
-        
-        <div class="left-column">
-            <!-- Logs detalhados (Prioridade maior na coluna da esquerda) -->
-            <div class="card" id="logs">
-                <h3><i class="fas fa-book-open"></i> Logs Detalhados</h3>
-                <table>
-                    <thead>
-                        <tr><th>Horário</th><th>Frase</th><th>Categoria</th><th>Alerta</th></tr>
-                    </thead>
-                    <tbody id="tabelaLogs"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="right-column">
-            <!-- Gráfico de Emoções (Prioridade menor na coluna da direita) -->
-            <div class="card" id="graficos">
-                <h3><i class="fas fa-smile-beam"></i> Emoções Predominantes</h3>
-                <canvas id="graficoEmocoes"></canvas>
-            </div>
-        </div>
-    </div>
-
+  <!-- Logs -->
+  <div class="card" id="logs">
+    <h3>Logs Detalhados</h3>
+    <table>
+      <thead>
+        <tr><th>Horário</th><th>Frase</th><th>Categoria</th><th>Alerta</th></tr>
+      </thead>
+      <tbody id="tabelaLogs"></tbody>
+    </table>
+  </div>
 </div>
-
-<!-- Chart.js CDN (Necessário para o gráfico) -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // Função para mapear a emoção a um ícone
-    function getEmocaoIcon(emocao) {
-        switch (emocao) {
-            case 'Feliz': return '😀';
-            case 'Triste': return '😞';
-            case 'Neutra': return '😐';
-            case 'Brincar': return '🧸';
-            case 'Necessidade': return '🍴';
-            case 'Calma': return '😌'; // NOVO: ícone para Calma
-            default: return '📊';
-        }
-    }
+// Dados simulados
+let dadosLogs = [];
+const alertasDiv = document.getElementById('alertas');
 
-    // Dados simulados aprimorados, utilizando os nomes das emoções nas categorias
-    const dadosLogs = [
-        {hora:'08:15', frase:'Quero brincar', categoria:'Brincar', alerta:false},
-        {hora:'09:05', frase:'Estou triste', categoria:'Triste', alerta:true},
-        {hora:'10:00', frase:'Estou calmo hoje', categoria:'Calma', alerta:false}, // Novo log
-        {hora:'11:30', frase:'Preciso ir ao banheiro', categoria:'Necessidade', alerta:false},
-        {hora:'13:45', frase:'Estou feliz!', categoria:'Feliz', alerta:false},
-        {hora:'15:10', frase:'Quero comer', categoria:'Necessidade', alerta:false},
-        {hora:'16:20', frase:'Gostei muito disso', categoria:'Feliz', alerta:false},
-    ];
+// Função simples de predição de crise
+function predicaoCrise(frase) {
+  const palavrasRisco = ['triste', 'dor', 'irritado', 'assustado', 'medo'];
+  for(let p of palavrasRisco){
+    if(frase.toLowerCase().includes(p)) return true;
+  }
+  return false;
+}
 
-    // Contagem de emoções baseada nos logs simulados
-    const emocaoCounts = {Feliz:2, Triste:1, Neutra:0, Brincar:1, Necessidade:2, Calma:1}; 
+// Função de categorização simples
+function categorizar(frase) {
+  const palavrasBrincar = ['brincar','jogar','divertir'];
+  const palavrasComer = ['comer','lanche','alimentar'];
+  const palavrasBanheiro = ['banheiro','ir ao banheiro'];
+  for(let p of palavrasBrincar) if(frase.toLowerCase().includes(p)) return 'Brincar';
+  for(let p of palavrasComer) if(frase.toLowerCase().includes(p)) return 'Necessidade';
+  for(let p of palavrasBanheiro) if(frase.toLowerCase().includes(p)) return 'Necessidade';
+  return 'Emoção';
+}
 
-    // Função para encontrar a emoção/categoria principal
-    function getEmocaoPrincipal(counts) {
-        let maxCount = -1;
-        let principal = 'Neutra'; // Padrão
-        for (const [emocao, count] of Object.entries(counts)) {
-            if (count > maxCount) {
-                maxCount = count;
-                principal = emocao;
-            }
-        }
-        return principal;
-    }
+// Processa a entrada do usuário
+function processarEntrada() {
+  const entrada = document.getElementById('entrada').value;
+  if(!entrada) return;
 
-    // Cores correspondentes às variáveis CSS (para o Chart.js)
-    const emotionColors = {
-        'Feliz': '#2ecc71',
-        'Triste': '#e74c3c',
-        'Neutra': '#f1c40f',
-        'Brincar': '#4B9CD3',
-        'Necessidade': '#9b59b6',
-        'Calma': '#1abc9c'
-    };
+  const hora = new Date().toLocaleTimeString();
+  const categoria = categorizar(entrada);
+  const alerta = predicaoCrise(entrada);
 
+  // Salvar no log
+  dadosLogs.push({hora, frase:entrada, categoria, alerta});
+  atualizarLogs();
 
-    // Inserir logs e atualizar o resumo ao carregar
-    window.onload = function() {
-        const tabela = document.getElementById('tabelaLogs');
-        dadosLogs.forEach(log => {
-            const tr = document.createElement('tr');
-            const alertaDisplay = log.alerta 
-                ? `<span class="alerta-true"><i class="fas fa-exclamation-triangle"></i></span>` 
-                : '';
-            
-            tr.innerHTML = `
-                <td>${log.hora}</td>
-                <td>${log.frase}</td>
-                <td>${log.categoria}</td>
-                <td>${alertaDisplay}</td>
-            `;
-            tabela.appendChild(tr);
-        });
+  // Exibir alerta se necessário
+  if(alerta){
+    const div = document.createElement('div');
+    div.className = 'alert';
+    div.innerText = `⚠️ Alerta de risco detectado: "${entrada}" às ${hora}`;
+    alertasDiv.appendChild(div);
+    falar(`Alerta! Possível crise detectada: ${entrada}`);
+  }
 
-        // Atualizar resumo (Mini-Cards)
-        const totalInteracoes = dadosLogs.length;
-        const totalAlertas = dadosLogs.filter(l => l.alerta).length;
-        const principalEmocao = getEmocaoPrincipal(emocaoCounts);
+  // Limpar input
+  document.getElementById('entrada').value='';
+}
 
-        document.getElementById('totalInteracoes').innerText = totalInteracoes;
-        document.getElementById('totalAlertas').innerText = totalAlertas;
-        
-        // Aplica a classe de cor e o ícone na Emoção Principal
-        const emocaoPrincipalElement = document.getElementById('emocaoPrincipal');
-        emocaoPrincipalElement.innerHTML = `${getEmocaoIcon(principalEmocao)} ${principalEmocao}`;
-        emocaoPrincipalElement.className = `value valor-emocao ${principalEmocao}`;
+// Atualiza tabela de logs
+function atualizarLogs() {
+  const tabela = document.getElementById('tabelaLogs');
+  tabela.innerHTML = '';
+  dadosLogs.forEach(log=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${log.hora}</td><td>${log.frase}</td><td>${log.categoria}</td><td>${log.alerta ? '⚠️' : ''}</td>`;
+    tabela.appendChild(tr);
+  });
+}
 
-
-        // Alertas no topo
-        const alertasDiv = document.getElementById('alertas');
-        dadosLogs.filter(l => l.alerta).forEach(a => {
-            const div = document.createElement('div');
-            div.className = 'alert';
-            div.innerHTML = `⚠️ **Alerta de Risco Detectado:** A criança expressou **"${a.frase}"** às ${a.hora}.`;
-            alertasDiv.appendChild(div);
-        });
-
-        // Configuração do Gráfico de Emoções
-        const ctx = document.getElementById('graficoEmocoes').getContext('2d');
-        const labels = Object.keys(emocaoCounts);
-        const dataValues = Object.values(emocaoCounts);
-        // Mapeia as cores para os dados na ordem correta
-        const backgroundColors = labels.map(label => emotionColors[label] || '#CCCCCC');
-
-        new Chart(ctx, {
-            type: 'doughnut', /* Donut Chart para um visual limpo */
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Contagem de Emoções',
-                    data: dataValues,
-                    backgroundColor: backgroundColors, 
-                    hoverOffset: 4
-                }]
-            },
-            options: { 
-                responsive: true,
-                aspectRatio: 1, 
-                plugins: {
-                    legend: { position: 'bottom' },
-                }
-            }
-        });
-    }
+// Fala em voz alta
+function falar(texto) {
+  const synth = window.speechSynthesis;
+  const utterThis = new SpeechSynthesisUtterance(texto);
+  utterThis.lang = 'pt-PT';
+  synth.speak(utterThis);
+}
 </script>
 
 </body>
