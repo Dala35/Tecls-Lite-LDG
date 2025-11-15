@@ -157,17 +157,22 @@ function exportarCSV(){
 }
 
 // --- Interação ---
-function responder(){
-  const entrada = document.getElementById("entrada").value;
-  const idioma = document.getElementById("idioma").value;
-  const emo = detectarEmocao(entrada);
-  const fraseSug = sugerirFrase(emo, []);
-  let resposta = idioma==="pt-PT"fr-FR"en-US"
-    ? `Tecla disse: '${entrada}'. ${fraseSug}`
-    : `Tecla said: '${entrada}'. ${fraseSug}`;
-  document.getElementById("saida").innerText = resposta;
+function responder() {
+    const entrada = document.getElementById("entrada").value;
+    const idioma = document.getElementById("idioma").value;
 
-  const synth = window.speechSynthesis;
+    // Assumindo que estas funções estão definidas em outro lugar
+    const emo = detectarEmocao(entrada);
+    const fraseSug = sugerirFrase(emo, []);
+
+    // CORREÇÃO: Usar o operador OR (||) para verificar vários idiomas
+    let resposta = (idioma === "pt-PT" || idioma === "fr-FR" || idioma === "en-US")
+        ? `Tecla disse: ${entrada}. ${fraseSug}` // Usando crase (`) para template literal
+        : `Tecla said: ${entrada}. ${fraseSug}`; // Usando crase (`) para template literal
+
+    document.getElementById("saida").innerText = resposta;
+
+    const synth = window.speechSynthesis;
   const utterThis = new SpeechSynthesisUtterance(resposta);
   utterThis.lang = idioma;
   synth.speak(utterThis);
