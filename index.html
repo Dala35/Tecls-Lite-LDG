@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tecla Premium - Monitor de Crises</title>
+<title>Tecla Premium - Dashboard Interativo</title>
 <style>
-  body { margin:0; font-family: Arial, sans-serif; background: #f4f7fa; }
-  .sidebar { position: fixed; left:0; top:0; width:220px; height:100%; background:#34495e; color:white; padding-top:20px;}
+  body { margin:0; font-family: Arial, sans-serif; background:#f4f7fa; }
+  .sidebar { position: fixed; left:0; top:0; width:240px; height:100%; background:#34495e; color:white; padding-top:20px; }
   .sidebar h2 { text-align:center; margin-bottom:30px; }
-  .sidebar a { display:block; padding:15px; color:white; text-decoration:none; margin:5px 0; border-radius:4px;}
+  .sidebar a { display:block; padding:15px; color:white; text-decoration:none; margin:5px 0; border-radius:4px; }
   .sidebar a:hover { background:#2c3e50; }
-  .main { margin-left:240px; padding:20px; }
+  .main { margin-left:260px; padding:20px; }
   .header { display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; }
   .header h1 { margin:0; font-size:24px; }
   .alert { padding:10px; background:#e74c3c; color:white; margin-bottom:10px; border-radius:5px; }
@@ -19,6 +19,7 @@
   th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
   input[type="text"] { width: 100%; padding:10px; margin-top:10px; font-size:16px; border:1px solid #ccc; border-radius:6px; }
   button { padding:10px 20px; margin-top:10px; border:none; background:#4b9cd3; color:white; border-radius:6px; cursor:pointer; font-size:16px; }
+  canvas { background:white; border-radius:8px; padding:10px; }
 </style>
 </head>
 <body>
@@ -32,11 +33,11 @@
 
 <div class="main">
   <div class="header">
-    <h1>Monitor de Crises</h1>
+    <h1>Dashboard Interativo</h1>
     <div>👤 Terapeuta</div>
   </div>
 
-  <!-- Input do usuário -->
+  <!-- Entrada de frases -->
   <div class="card">
     <h3>Entrada de Frase</h3>
     <input type="text" id="entrada" placeholder="Digite a frase ou desejo da criança">
@@ -56,8 +57,16 @@
       <tbody id="tabelaLogs"></tbody>
     </table>
   </div>
+
+  <!-- Gráfico de Emoções -->
+  <div class="card">
+    <h3>Resumo de Emoções</h3>
+    <canvas id="graficoEmocoes" width="400" height="200"></canvas>
+  </div>
+
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 // Dados simulados
 let dadosLogs = [];
@@ -72,18 +81,23 @@ function predicaoCrise(frase) {
   return false;
 }
 
-// Função de categorização simples
+// Função de categorização
 function categorizar(frase) {
   const palavrasBrincar = ['brincar','jogar','divertir'];
   const palavrasComer = ['comer','lanche','alimentar'];
   const palavrasBanheiro = ['banheiro','ir ao banheiro'];
+  const palavrasFeliz = ['feliz','contente','sorrir'];
+  const palavrasTriste = ['triste','chorar','infeliz'];
+  
   for(let p of palavrasBrincar) if(frase.toLowerCase().includes(p)) return 'Brincar';
   for(let p of palavrasComer) if(frase.toLowerCase().includes(p)) return 'Necessidade';
   for(let p of palavrasBanheiro) if(frase.toLowerCase().includes(p)) return 'Necessidade';
-  return 'Emoção';
+  for(let p of palavrasFeliz) if(frase.toLowerCase().includes(p)) return 'Feliz';
+  for(let p of palavrasTriste) if(frase.toLowerCase().includes(p)) return 'Triste';
+  return 'Neutro';
 }
 
-// Processa a entrada do usuário
+// Processa entrada do usuário
 function processarEntrada() {
   const entrada = document.getElementById('entrada').value;
   if(!entrada) return;
@@ -95,8 +109,9 @@ function processarEntrada() {
   // Salvar no log
   dadosLogs.push({hora, frase:entrada, categoria, alerta});
   atualizarLogs();
+  atualizarGrafico();
 
-  // Exibir alerta se necessário
+  // Exibir alerta
   if(alerta){
     const div = document.createElement('div');
     div.className = 'alert';
@@ -105,7 +120,6 @@ function processarEntrada() {
     falar(`Alerta! Possível crise detectada: ${entrada}`);
   }
 
-  // Limpar input
   document.getElementById('entrada').value='';
 }
 
@@ -126,6 +140,28 @@ function falar(texto) {
   const utterThis = new SpeechSynthesisUtterance(texto);
   utterThis.lang = 'pt-PT';
   synth.speak(utterThis);
+}
+
+// Gráfico de Emoções
+const ctx = document.getElementById('graficoEmocoes').getContext('2d');
+const grafico = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Feliz', 'Triste', 'Brincar', 'Necessidade', 'Neutro'],
+    datasets: [{
+      label: 'Quantidade de ocorrências',
+      data: [0,0,0,0,0],
+      backgroundColor: ['#2ecc71','#e74c3c','#3498db','#f1c40f','#95a5a6']
+    }]
+  },
+  options: { responsive:true, plugins:{ legend:{ display:false } } }
+});
+
+function atualizarGrafico() {
+  const contagem = {Feliz:0, Triste:0, Brincar:0, Necessidade:0, Neutro:0};
+  dadosLogs.forEach(log => contagem[log.categoria]++);
+  grafico.data.datasets[0].data = Object.values(contagem);
+  grafico.update();
 }
 </script>
 
