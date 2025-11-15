@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tecla Premium - Dashboard Avançado</title>
+<title>Tecla Premium - Respiração Guiada</title>
 <style>
   body { margin:0; font-family: Arial, sans-serif; background:#f4f7fa; }
   .sidebar { position: fixed; left:0; top:0; width:240px; height:100%; background:#34495e; color:white; padding-top:20px; }
@@ -23,6 +23,7 @@
   .barras { display:flex; justify-content:space-between; margin-top:20px; }
   .barra { background:#3498db; color:white; padding:10px; border-radius:6px; flex:1; margin:0 5px; text-align:center; cursor:pointer; transition:0.2s; }
   .barra:hover { background:#2980b9; }
+  .respiracao { text-align:center; font-size:24px; margin-top:20px; }
 </style>
 </head>
 <body>
@@ -34,6 +35,7 @@
   <a href="#config">Configurações</a>
   <a href="#versoes">Versões</a>
   <a href="#bio">Biometria</a>
+  <a href="#resp">Respiração Guiada</a>
 </div>
 
 <div class="main">
@@ -84,6 +86,14 @@
       <div class="barra" onclick="abrirVersao('https://exemplo.com/tecla_premium.html')">Premium</div>
     </div>
   </div>
+
+  <!-- Respiração Guiada -->
+  <div class="card" id="resp">
+    <h3>Respiração Guiada</h3>
+    <div class="respiracao" id="respiracao">Aguardando alerta...</div>
+    <button onclick="iniciarRespiracao()">Iniciar Exercício</button>
+  </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -143,6 +153,7 @@ function processarEntrada() {
     div.innerText = `⚠️ Alerta de possível crise: "${entrada}" às ${hora} (Freq: ${freqCard} bpm, Resp: ${resp})`;
     alertasDiv.appendChild(div);
     falar(`Alerta! Possível crise detectada: ${entrada}`);
+    iniciarRespiracao(); // Inicia respiração guiada automaticamente
   }
 
   document.getElementById('entrada').value='';
@@ -216,6 +227,25 @@ function atualizarBio() {
 // Função abrir versão em nova aba
 function abrirVersao(url) {
   window.open(url, '_blank');
+}
+
+// Respiração guiada
+let respInterval;
+function iniciarRespiracao() {
+  const el = document.getElementById('respiracao');
+  let fase = 0; // 0: inspirar, 1: segurar, 2: expirar
+  let contador = 4;
+
+  clearInterval(respInterval);
+  el.innerText = 'Preparar...';
+
+  setTimeout(() => {
+    respInterval = setInterval(() => {
+      if(fase === 0){ el.innerText = `Inspire: ${contador}`; contador--; if(contador===0){fase=1; contador=2;} }
+      else if(fase ===1){ el.innerText = `Segure: ${contador}`; contador--; if(contador===0){fase=2; contador=6;} }
+      else if(fase ===2){ el.innerText = `Expire: ${contador}`; contador--; if(contador===0){fase=0; contador=4;} }
+    }, 1000);
+  }, 2000);
 }
 </script>
 
