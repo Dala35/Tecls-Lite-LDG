@@ -1,0 +1,133 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Verdana', sans-serif;
+  background: #f7faff;
+  color: #222;
+}
+
+/* MENU LATERAL */
+#menuIcon {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+#sideMenu {
+  position: fixed;
+  left: -260px;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  background: #1e2a38;
+  color: white;
+  padding: 20px;
+  transition: 0.3s ease;
+}
+
+#sideMenu.open {
+  left: 0;
+}
+
+#sideMenu h2 {
+  margin-top: 0;
+}
+
+#sideMenu ul {
+  list-style: none;
+  padding: 0;
+}
+
+#sideMenu ul li {
+  margin: 15px 0;
+}
+
+#sideMenu ul li a {
+  color: #bfe0ff;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+header {
+  background: #4b9cd3;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.container {
+  max-width: 750px;
+  margin: 100px auto 50px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+select, input {
+  width: 100%;
+  padding: 14px;
+  font-size: 18px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #4b9cd3;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.pictogramas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pictograma {
+  flex: 1 1 30%;
+  background: #e1f0fb;
+  text-align: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ALERTA DE CRISE */
+#alertaCrise {
+  margin-top: 20px;
+  background: #ffe1e1;
+  padding: 10px;
+  color: #b30000;
+  font-size: 18px;
+  border-left: 6px solid #ff5a5a;
+  display: none;
+}
+
+/* RESPIRAÇÃO GUIADA */
+#respiracaoGuiada {
+  margin-top: 20px;
+  background: #e8fff0;
+  padding: 20px;
+  border-radius: 8px;
+  display: none;
+}
+
+/* CALM MODE */
+.tecla-low-stimulus {
+  background: #dce9f5 !important;
+  transition: 0.3s;
+}
