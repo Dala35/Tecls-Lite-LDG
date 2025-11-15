@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🧠 Tecla Lite Avançada +</title>
+<title>🧠 Tecla Lite Multiusuário + Badges</title>
 <style>
 body { font-family: Comic Sans MS, Arial, sans-serif; margin:0; padding:20px; background-color:#fff9f0; color:#333; }
 header { text-align:center; padding:10px; background-color:#4b9cd3; color:white; border-radius:8px; }
@@ -16,20 +16,28 @@ button { background-color:#4b9cd3; color:white; padding:12px 20px; font-size:18p
 #saida { margin-top:20px; font-size:20px; color:#222; padding:10px; background-color:#e6f7ff; border-radius:8px; }
 #dashboard { margin-top:30px; padding:10px; background:#f0f0f0; border-radius:8px; }
 canvas { margin-top:20px; max-width:100%; }
+#loginSection { margin-bottom:20px; }
+.badges { margin-top:10px; }
+.badge { display:inline-block; padding:5px 10px; background:#FFD700; border-radius:6px; margin-right:5px; }
 </style>
 </head>
 <body>
 <header>
-<h1>🧠 Tecla Lite Avançada +</h1>
-<p>Ferramenta bilíngue com pictogramas, emoções, gamificação e exportação</p>
+<h1>🧠 Tecla Lite Multiusuário + Badges</h1>
+<p>Ferramenta bilíngue com pictogramas, emoções, gamificação e multiusuários</p>
 </header>
 
 <div class="container">
+<div id="loginSection">
+<label>Nome da criança:</label>
+<input type="text" id="usuarioNome" placeholder="Ex: João" />
+<button onclick="loginUsuario()">🔑 Entrar</button>
+</div>
+
 <label for="idioma">🌍 Escolha o idioma:</label>
 <select id="idioma">
   <option value="pt-PT">Português</option>
   <option value="en-US">English</option>
-  <option value="fr-fr">français</option>
 </select>
 
 <label for="entrada">💬 Digite ou fale o que a criança deseja:</label>
@@ -52,6 +60,7 @@ canvas { margin-top:20px; max-width:100%; }
 <h3>📊 Dashboard</h3>
 <div id="contagemEmocoes"></div>
 <div id="pontosAcumulados"></div>
+<div class="badges" id="badgesUsuario"></div>
 <canvas id="graficoEmocoes" width="400" height="200"></canvas>
 </div>
 
@@ -62,62 +71,77 @@ canvas { margin-top:20px; max-width:100%; }
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// --- Funções Avançadas ---
-function detectarEmocao(texto){
-  const emoLexico = {
-    feliz: ["feliz","alegre","sorrindo","contente"],
-    triste: ["triste","chateado","infeliz","chorando"],
-    dor: ["dor","machucado","ferido","mal"],
-    raiva: ["raiva","bravo","irritado"]
-  };
-  texto = texto.toLowerCase();
-  for(let emo in emoLexico){
-    for(let palavra of emoLexico[emo]) if(texto.includes(palavra)) return emo;
-  }
-  return "neutro";
-}
+let usuarioAtual = null;
+let grafico;
 
-function sugerirFrase(emo, historico=[]){
-  const sugestoes = {
-    feliz:["Que bom!","Vamos brincar!","Isso é ótimo!"],
-    triste:["Tudo vai ficar bem.","Quer um abraço?","Estou aqui contigo."],
-    dor:["Quer ajuda?","Vamos descansar um pouco.","Vou chamar um adulto."],
-    raiva:["Respira fundo.","Vamos acalmar juntos.","Tudo bem sentir raiva."],
-    neutro:["Vamos conversar!"]
-  };
-  let frase = sugestoes[emo] ? sugestoes[emo][Math.floor(Math.random()*sugestoes[emo].length)] : "Vamos conversar!";
-  if(historico.includes(frase)) frase += " 😊";
-  return frase;
-}
-
-function salvarInteracao(frase, emo){
-  const registro = {timestamp:new Date().toISOString(), frase, emocao:emo};
-  let historico = JSON.parse(localStorage.getItem("interacoesTecla")) || [];
-  historico.push(registro);
-  if(historico.length>200) historico.shift();
-  localStorage.setItem("interacoesTecla", JSON.stringify(historico));
+// --- Login ---
+function loginUsuario(){
+  const nome = document.getElementById("usuarioNome").value.trim();
+  if(!nome) return alert("Insira o nome da criança!");
+  usuarioAtual = nome;
+  if(!localStorage.getItem("usuariosTecla")) localStorage.setItem("usuariosTecla", JSON.stringify({}));
+  alert(`Bem-vindo, ${usuarioAtual}!`);
   atualizarDashboard();
 }
 
-function atualizarPontos(emo){
-  let pontos = parseInt(localStorage.getItem("pontosTecla")) || 0;
-  if(emo==="feliz") pontos+=10;
-  else if(emo==="triste") pontos+=5;
-  else pontos+=2;
-  localStorage.setItem("pontosTecla", pontos);
+// --- Emoções ---
+function detectarEmocao(texto){
+  const emoLexico = { feliz:["feliz","alegre","sorrindo","contente"], triste:["triste","chateado","infeliz","chorando"], dor:["dor","machucado","ferido","mal"], raiva:["raiva","bravo","irritado"]};
+  texto = texto.toLowerCase();
+  for(let emo in emoLexico) for(let palavra of emoLexico[emo]) if(texto.includes(palavra)) return emo;
+  return "neutro";
 }
 
+function sugerirFrase(emo,historico=[]){
+  const sugestoes={ feliz:["Que bom!","Vamos brincar!","Isso é ótimo!"], triste:["Tudo vai ficar bem.","Quer um abraço?","Estou aqui contigo."], dor:["Quer ajuda?","Vamos descansar um pouco.","Vou chamar um adulto."], raiva:["Respira fundo.","Vamos acalmar juntos.","Tudo bem sentir raiva."], neutro:["Vamos conversar!"]};
+  let frase = sugestoes[emo] ? sugestoes[emo][Math.floor(Math.random()*sugestoes[emo].length)] : "Vamos conversar!";
+  if(historico.includes(frase)) frase+=" 😊";
+  return frase;
+}
+
+// --- Interações ---
+function salvarInteracao(frase, emo){
+  if(!usuarioAtual) return alert("Por favor faça login primeiro!");
+  let usuarios = JSON.parse(localStorage.getItem("usuariosTecla")) || {};
+  if(!usuarios[usuarioAtual]) usuarios[usuarioAtual] = {interacoes:[], pontos:0, badges:[]};
+  usuarios[usuarioAtual].interacoes.push({timestamp:new Date().toISOString(), frase, emocao:emo});
+  if(usuarios[usuarioAtual].interacoes.length>200) usuarios[usuarioAtual].interacoes.shift();
+  atualizarPontos(usuarios[usuarioAtual], emo);
+  verificarBadges(usuarios[usuarioAtual]);
+  localStorage.setItem("usuariosTecla", JSON.stringify(usuarios));
+  atualizarDashboard();
+}
+
+function atualizarPontos(usuario, emo){
+  if(emo==="feliz") usuario.pontos+=10;
+  else if(emo==="triste") usuario.pontos+=5;
+  else usuario.pontos+=2;
+}
+
+function verificarBadges(usuario){
+  const pontos = usuario.pontos;
+  const badgesPossiveis = [
+    {nome:"🌟 50 Pontos", requisito:50},
+    {nome:"🏆 100 Pontos", requisito:100},
+    {nome:"🎖️ 200 Pontos", requisito:200},
+  ];
+  badgesPossiveis.forEach(b=>{ if(pontos>=b.requisito && !usuario.badges.includes(b.nome)) usuario.badges.push(b.nome); });
+}
+
+// --- Dashboard ---
 function atualizarDashboard(){
-  let historico = JSON.parse(localStorage.getItem("interacoesTecla")) || [];
-  const contagem = {feliz:0,triste:0,dor:0,raiva:0,neutro:0};
-  historico.forEach(i=>contagem[i.emocao] = (contagem[i.emocao]||0)+1);
-  document.getElementById("contagemEmocoes").innerHTML = `Emoções: ${JSON.stringify(contagem)}`;
-  document.getElementById("pontosAcumulados").innerHTML = `Pontos: ${localStorage.getItem("pontosTecla")||0}`;
+  if(!usuarioAtual) return;
+  let usuarios = JSON.parse(localStorage.getItem("usuariosTecla")) || {};
+  const usuario = usuarios[usuarioAtual] || {interacoes:[], pontos:0, badges:[]};
+  const contagem={feliz:0,triste:0,dor:0,raiva:0,neutro:0};
+  usuario.interacoes.forEach(i=>contagem[i.emocao]=(contagem[i.emocao]||0)+1);
+  document.getElementById("contagemEmocoes").innerText = `Emoções: ${JSON.stringify(contagem)}`;
+  document.getElementById("pontosAcumulados").innerText = `Pontos: ${usuario.pontos}`;
+  document.getElementById("badgesUsuario").innerHTML = usuario.badges.map(b=>`<span class="badge">${b}</span>`).join(" ");
   atualizarGrafico(contagem);
 }
 
 // --- Gráfico ---
-let grafico;
 function atualizarGrafico(contagem){
   const ctx = document.getElementById('graficoEmocoes').getContext('2d');
   if(grafico) grafico.destroy();
@@ -125,11 +149,7 @@ function atualizarGrafico(contagem){
     type:'bar',
     data:{
       labels:Object.keys(contagem),
-      datasets:[{
-        label:'Quantidade de Emoções',
-        data:Object.values(contagem),
-        backgroundColor:['#FFD700','#87CEEB','#FF6347','#FF4500','#C0C0C0']
-      }]
+      datasets:[{label:'Quantidade de Emoções', data:Object.values(contagem), backgroundColor:['#FFD700','#87CEEB','#FF6347','#FF4500','#C0C0C0']}]
     },
     options:{responsive:true, maintainAspectRatio:false}
   });
@@ -137,48 +157,40 @@ function atualizarGrafico(contagem){
 
 // --- Exportação ---
 function exportarJSON(){
-  const historico = JSON.parse(localStorage.getItem("interacoesTecla")) || [];
-  const blob = new Blob([JSON.stringify(historico, null, 2)], {type:"application/json"});
+  if(!usuarioAtual) return alert("Faça login para exportar!");
+  let usuarios = JSON.parse(localStorage.getItem("usuariosTecla")) || {};
+  const usuario = usuarios[usuarioAtual] || {interacoes:[]};
+  const blob = new Blob([JSON.stringify(usuario.interacoes, null,2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href=url; a.download="historico_tecla.json"; a.click();
+  const a = document.createElement("a"); a.href=url; a.download=`historico_${usuarioAtual}.json`; a.click();
   URL.revokeObjectURL(url);
 }
 
 function exportarCSV(){
-  const historico = JSON.parse(localStorage.getItem("interacoesTecla")) || [];
-  let csv = "timestamp,frase,emocao\n";
-  historico.forEach(r => csv += `"${r.timestamp}","${r.frase.replace(/"/g,'""')}","${r.emocao}"\n`);
+  if(!usuarioAtual) return alert("Faça login para exportar!");
+  let usuarios = JSON.parse(localStorage.getItem("usuariosTecla")) || {};
+  const usuario = usuarios[usuarioAtual] || {interacoes:[]};
+  let csv="timestamp,frase,emocao\n";
+  usuario.interacoes.forEach(r=>csv+=`"${r.timestamp}","${r.frase.replace(/"/g,'""')}","${r.emocao}"\n`);
   const blob = new Blob([csv], {type:"text/csv"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href=url; a.download="historico_tecla.csv"; a.click();
+  const a = document.createElement("a"); a.href=url; a.download=`historico_${usuarioAtual}.csv`; a.click();
   URL.revokeObjectURL(url);
 }
 
 // --- Interação ---
-function responder() {
-    const entrada = document.getElementById("entrada").value;
-    const idioma = document.getElementById("idioma").value;
-
-    // Assumindo que estas funções estão definidas em outro lugar
-    const emo = detectarEmocao(entrada);
-    const fraseSug = sugerirFrase(emo, []);
-
-    // CORREÇÃO: Usar o operador OR (||) para verificar vários idiomas
-    let resposta = (idioma === "pt-PT" || idioma === "fr-FR" || idioma === "en-US")
-        ? `Tecla disse: ${entrada}. ${fraseSug}` // Usando crase (`) para template literal
-        : `Tecla said: ${entrada}. ${fraseSug}`; // Usando crase (`) para template literal
-
-    document.getElementById("saida").innerText = resposta;
-
-    const synth = window.speechSynthesis;
+function responder(){
+  const entrada = document.getElementById("entrada").value;
+  const idioma = document.getElementById("idioma").value;
+  const emo = detectarEmocao(entrada);
+  const fraseSug = sugerirFrase(emo, []);
+  let resposta = idioma==="pt-PT" ? `Tecla disse: '${entrada}'. ${fraseSug}` : `Tecla said: '${entrada}'. ${fraseSug}`;
+  document.getElementById("saida").innerText = resposta;
+  const synth = window.speechSynthesis;
   const utterThis = new SpeechSynthesisUtterance(resposta);
   utterThis.lang = idioma;
   synth.speak(utterThis);
-
   salvarInteracao(entrada, emo);
-  atualizarPontos(emo);
 }
 
 function usarFrase(texto){ document.getElementById("entrada").value = texto; responder(); }
@@ -188,14 +200,13 @@ function falar(){
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.lang = idioma;
   recognition.start();
-  recognition.onresult = function(event){
-    const textoFalado = event.results[0][0].transcript;
-    document.getElementById("entrada").value = textoFalado;
+  recognition.onresult=function(event){
+    document.getElementById("entrada").value = event.results[0][0].transcript;
     responder();
   };
 }
 
-window.onload = function(){ atualizarDashboard(); };
+window.onload=function(){ atualizarDashboard(); };
 </script>
 </body>
 </html>
