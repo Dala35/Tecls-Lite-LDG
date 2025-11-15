@@ -16,6 +16,7 @@
             --color-dark-menu: #1e2a38; /* Fundo Menu Lateral */
             --color-alert: #A00000; /* Texto de Alerta */
             --color-alert-bg: #FFEBEB; /* Fundo de Alerta */
+            --color-success: #2ecc71; /* Cor para sucesso/positivo */
 
             /* --- VARIÁVEIS DE LAYOUT E ESPAÇAMENTO --- */
             --spacing-large: 25px;
@@ -100,7 +101,51 @@
             color: #555;
         }
 
-        /* --- CARDS E ALERTA --- */
+        /* --- LAYOUT DO PAINEL DE CONTROLE (NOVO: COLUNAS) --- */
+        .dashboard-layout {
+            display: flex;
+            gap: var(--spacing-large);
+            margin-bottom: var(--spacing-large);
+        }
+
+        .left-column {
+            flex: 2; /* 2/3 da largura */
+            min-width: 0;
+        }
+        
+        .right-column {
+            flex: 1; /* 1/3 da largura */
+            min-width: 0;
+        }
+
+        /* --- MINI-CARDS DE RESUMO (NOVO) --- */
+        .mini-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--spacing-medium);
+            margin-bottom: var(--spacing-large);
+        }
+        .mini-card {
+            background: var(--color-background-white);
+            padding: var(--spacing-medium);
+            border-radius: var(--border-radius-medium);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 1px solid #EFEFEF;
+        }
+        .mini-card p {
+            margin: 5px 0 0 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .mini-card .value {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        /* --- CARDS E ALERTA (Geral) --- */
         .card {
             background: var(--color-background-white);
             padding: var(--spacing-large);
@@ -146,17 +191,20 @@
         tr:nth-child(even) {
             background-color: #f7faff; /* Listras suaves */
         }
-        /* Cor de destaque para o Alerta na tabela */
+        /* Cor de destaque para o Alerta na tabela e no resumo */
         .alerta-true {
             color: var(--color-alert);
             font-weight: bold;
         }
+        .valor-interacoes { color: var(--color-primary); }
+        .valor-alerta { color: var(--color-alert); }
+        .valor-emocao { color: var(--color-success); }
 
 
         /* --- RESPONSIVIDADE (MOBILE / TABLET) --- */
         @media (max-width: 900px) {
             .sidebar {
-                position: static; /* Sidebar flutua para o topo em telas pequenas */
+                position: static; 
                 width: 100%;
                 height: auto;
                 padding: 15px 20px;
@@ -180,9 +228,15 @@
                 background: #2c3e50;
             }
             .main-content {
-                margin-left: 0; /* Remove margem do conteúdo principal */
+                margin-left: 0;
                 padding-top: 20px;
             }
+            
+            /* Colunas do Dashboard se empilham em telas pequenas */
+            .dashboard-layout {
+                flex-direction: column;
+            }
+
             /* Ajuste para rolagem horizontal em tabelas (se necessário) */
             .card table {
                 display: block;
@@ -214,29 +268,52 @@
     <!-- Alertas (Topo) -->
     <div id="alertas"></div>
 
-    <!-- Cards resumo -->
-    <div class="card" id="dashboard">
-        <h3><i class="fas fa-tachometer-alt"></i> Resumo Diário</h3>
-        <p>Total de Interações: <span id="totalInteracoes" class="font-bold">0</span></p>
-        <p>Alertas de Risco Hoje: <span id="totalAlertas" class="alerta-true">0</span></p>
+    <!-- Mini-Cards de Resumo -->
+    <div class="mini-card-grid" id="dashboard">
+        <!-- Total de Interações -->
+        <div class="mini-card">
+            <p>Total de Interações</p>
+            <p class="value valor-interacoes" id="totalInteracoes">0</p>
+        </div>
+
+        <!-- Alertas de Risco -->
+        <div class="mini-card">
+            <p>Alertas de Risco Hoje</p>
+            <p class="value valor-alerta" id="totalAlertas">0</p>
+        </div>
+
+        <!-- Emoção Predominante (Este será preenchido pelo JS) -->
+        <div class="mini-card">
+            <p>Emoção Principal</p>
+            <p class="value valor-emocao" id="emocaoPrincipal">--</p>
+        </div>
     </div>
 
-    <!-- Gráfico de Emoções -->
-    <div class="card" id="graficos">
-        <h3><i class="fas fa-smile-beam"></i> Emoções Predominantes</h3>
-        <canvas id="graficoEmocoes"></canvas>
+    <!-- Layout de Colunas (Gráficos e Logs) -->
+    <div class="dashboard-layout">
+        
+        <div class="left-column">
+            <!-- Logs detalhados (Prioridade maior na coluna da esquerda) -->
+            <div class="card" id="logs">
+                <h3><i class="fas fa-book-open"></i> Logs Detalhados</h3>
+                <table>
+                    <thead>
+                        <tr><th>Horário</th><th>Frase</th><th>Categoria</th><th>Alerta</th></tr>
+                    </thead>
+                    <tbody id="tabelaLogs"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <!-- Gráfico de Emoções (Prioridade menor na coluna da direita) -->
+            <div class="card" id="graficos">
+                <h3><i class="fas fa-smile-beam"></i> Emoções Predominantes</h3>
+                <canvas id="graficoEmocoes"></canvas>
+            </div>
+        </div>
     </div>
 
-    <!-- Logs detalhados -->
-    <div class="card" id="logs">
-        <h3><i class="fas fa-book-open"></i> Logs Detalhados</h3>
-        <table>
-            <thead>
-                <tr><th>Horário</th><th>Frase</th><th>Categoria</th><th>Alerta</th></tr>
-            </thead>
-            <tbody id="tabelaLogs"></tbody>
-        </table>
-    </div>
 </div>
 
 <!-- Chart.js CDN (Necessário para o gráfico) -->
@@ -250,16 +327,32 @@
         {hora:'11:30', frase:'Preciso ir ao banheiro', categoria:'Necessidade', alerta:false},
         {hora:'13:45', frase:'Estou feliz!', categoria:'Emoção', alerta:false},
         {hora:'15:10', frase:'Quero comer', categoria:'Necessidade', alerta:false},
+        {hora:'16:20', frase:'Gostei muito disso', categoria:'Emoção', alerta:false},
     ];
 
-    const emocaoCounts = {Feliz:3, Triste:1, Neutra:1}; // Adicionei Neutra para melhor representação no gráfico
+    const emocaoCounts = {Feliz:3, Triste:1, Neutra:1, Brincar:1}; // Dados mais ricos
+
+    // Função para encontrar a emoção principal
+    function getEmocaoPrincipal(counts) {
+        let maxCount = 0;
+        let principal = '--';
+        for (const [emocao, count] of Object.entries(counts)) {
+            if (count > maxCount) {
+                maxCount = count;
+                principal = emocao;
+            }
+        }
+        return principal;
+    }
 
     // Inserir logs
     const tabela = document.getElementById('tabelaLogs');
     dadosLogs.forEach(log => {
         const tr = document.createElement('tr');
         // Usando a classe 'alerta-true' para formatar o ícone de alerta
-        const alertaDisplay = log.alerta ? `<span class="alerta-true"><i class="fas fa-exclamation-triangle"></i></span>` : '';
+        const alertaDisplay = log.alerta 
+            ? `<span class="alerta-true"><i class="fas fa-exclamation-triangle"></i></span>` 
+            : '';
         
         tr.innerHTML = `
             <td>${log.hora}</td>
@@ -270,9 +363,10 @@
         tabela.appendChild(tr);
     });
 
-    // Atualizar resumo
+    // Atualizar resumo (Mini-Cards)
     document.getElementById('totalInteracoes').innerText = dadosLogs.length;
     document.getElementById('totalAlertas').innerText = dadosLogs.filter(l => l.alerta).length;
+    document.getElementById('emocaoPrincipal').innerText = getEmocaoPrincipal(emocaoCounts);
 
     // Alertas no topo
     const alertasDiv = document.getElementById('alertas');
@@ -286,19 +380,20 @@
     // Gráfico de emoções
     const ctx = document.getElementById('graficoEmocoes').getContext('2d');
     new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut', /* Alterado para Donut Chart para um visual mais limpo */
         data: {
             labels: Object.keys(emocaoCounts),
             datasets: [{
                 label: 'Contagem de Emoções',
                 data: Object.values(emocaoCounts),
                 // Cores suaves e amigáveis, alinhadas ao design Tecla
-                backgroundColor: ['#2ecc71', '#e74c3c', '#f1c40f', '#4B9CD3', '#9b59b6'], 
+                backgroundColor: ['#2ecc71', '#e74c3c', '#f1c40f', '#4B9CD3', '#9b59b6', '#3498db'], 
                 hoverOffset: 4
             }]
         },
         options: { 
             responsive: true,
+            aspectRatio: 1, /* Mantém proporção quadrada */
             plugins: {
                 legend: {
                     position: 'bottom',
