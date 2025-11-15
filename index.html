@@ -1,175 +1,165 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tecla Lite Avançada</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f9f9f9; }
-    header { text-align:center; background:#4b9cd3; color:white; padding:15px; border-radius:8px; }
-    .container { max-width:900px; margin:auto; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-    input, select, button { width:100%; padding:12px; margin-top:10px; font-size:16px; border-radius:6px; border:1px solid #ccc; }
-    button { background:#4b9cd3; color:white; border:none; cursor:pointer; }
-    button:hover { background:#367bb5; }
-    .dashboard { margin-top:20px; }
-    .entry { padding:10px; border-bottom:1px solid #ddd; }
-    canvas { max-width:100%; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tecla Premium Avançada</title>
+<style>
+  body { font-family: Comic Sans MS, Arial, sans-serif; margin: 0; padding: 20px; background-color: #fff9f0; color: #333; }
+  header { text-align: center; padding: 10px; background-color: #4b9cd3; color: white; border-radius: 8px; }
+  .container { max-width: 700px; margin: auto; background: #fff; padding: 20px; border-radius: 14px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  select, input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin-top: 10px; font-size: 18px; border: 1px solid #ccc; border-radius: 8px; }
+  button { background-color: #4b9cd3; color: white; padding: 12px 20px; font-size: 18px; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; }
+  .pictogramas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .pictograma { flex: 1 1 30%; background-color: #e1f0fb; padding: 14px; font-size: 16px; text-align: center; border-radius: 8px; cursor: pointer; border: 1px solid #aad; }
+  .pictograma:hover { background-color: #cde9fa; }
+  .barras-container { margin-top: 20px; }
+  .barras-container button { margin: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  .barra { padding: 15px; background: #f2f2f2; margin-top: 10px; border-radius: 8px; display: none; }
+  .barra ul { list-style: none; padding-left: 0; }
+  .barra li { margin: 5px 0; }
+  #saida { margin-top: 20px; font-size: 20px; color: #222; padding: 10px; background-color: #e6f7ff; border-radius: 8px; }
+</style>
 </head>
 <body>
 <header>
-  <h1>🧠 Tecla Lite Avançada</h1>
-  <p>Interface multiusuário com gráfico de emoções e badges</p>
+  <h1>🧠 Tecla Premium</h1>
+  <p>Ferramenta bilíngue com pictogramas, histórico e acesso a versões anteriores</p>
 </header>
 
 <div class="container">
-  <h2>Login</h2>
-  <select id="perfil">
-    <option value="crianca">Criança</option>
-    <option value="familiar">Familiar/Terapeuta</option>
-  </select>
-  <input type="text" id="nome" placeholder="Nome do usuário">
+  <h2>🔐 Login de Usuário</h2>
+  <input type="text" id="username" placeholder="Nome do usuário" />
+  <input type="password" id="password" placeholder="Senha" />
   <button onclick="login()">Entrar</button>
 
   <div id="teclaApp" style="display:none;">
-    <h2>Bem-vindo, <span id="usuarioNome"></span></h2>
+    <label for="idioma">🌍 Escolha o idioma:</label>
+    <select id="idioma">
+      <option value="pt-PT">Português</option>
+      <option value="en-US">English</option>
+    </select>
 
-    <label>💬 Frase:</label>
-    <input type="text" id="entrada">
+    <label for="entrada">💬 Digite ou fale o que deseja:</label>
+    <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
     <button onclick="responder()">🔊 Falar</button>
-    <button onclick="exportarHistorico()">📤 Exportar Histórico</button>
+    <button onclick="falar()">🎙️ Falar com Tecla</button>
 
-    <div class="dashboard">
-      <h3>📜 Histórico</h3>
-      <div id="historico"></div>
+    <div class="pictogramas">
+      <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
+      <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
+      <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
+      <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
+      <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
+      <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
     </div>
 
-    <div class="dashboard">
-      <h3>📊 Emoções</h3>
-      <canvas id="graficoEmocoes"></canvas>
+    <div class="barras-container">
+      <button onclick="ativarBarra(1)">🌟 Gratuito</button>
+      <button onclick="ativarBarra(2)">💎 Intermediário</button>
+      <button onclick="ativarBarra(3)">🏆 Premium</button>
     </div>
 
-    <div class="dashboard">
-      <h3>🏆 Conquistas</h3>
-      <ul id="badges"></ul>
+    <div id="barra1" class="barra">
+      <h3>Versões Gratuitas</h3>
+      <ul id="links-barra1"></ul>
     </div>
+    <div id="barra2" class="barra">
+      <h3>Versões Intermediárias</h3>
+      <ul id="links-barra2"></ul>
+    </div>
+    <div id="barra3" class="barra">
+      <h3>Versões Premium</h3>
+      <ul id="links-barra3"></ul>
+    </div>
+
+    <div id="saida"></div>
   </div>
 </div>
 
 <script>
-let usuarioAtual = null;
-let emocaoCounts = { feliz:0, triste:0, brincar:0, dor:0 };
+let usersDB = [
+  {username:"dala", password:"1234", nivel:3, historico:[], versoes: {barra1:["https://tecla.app/v1"], barra2:["https://tecla.app/v2"], barra3:["https://tecla.app/v3"]}}
+];
 
-function login() {
-  const nome = document.getElementById('nome').value.trim();
-  const perfil = document.getElementById('perfil').value;
-  if (!nome) { alert('Digite o nome do usuário'); return; }
+let currentUser = null;
 
-  usuarioAtual = { nome, perfil };
-  document.getElementById('usuarioNome').innerText = nome;
-  document.querySelector('#teclaApp').style.display = 'block';
-  carregarHistorico();
+function login(){
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
+  currentUser = usersDB.find(u => u.username === user && u.password === pass);
+  if(currentUser){
+    document.getElementById("teclaApp").style.display = "block";
+    alert("Login realizado com sucesso!");
+    carregarLinks(currentUser);
+    ativarBarra(currentUser.nivel);
+  } else {
+    alert("Usuário ou senha incorretos.");
+  }
 }
 
-function salvarHistorico(frase) {
-  let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
-  if (!historico[usuarioAtual.nome]) historico[usuarioAtual.nome] = [];
-  historico[usuarioAtual.nome].push({ frase, timestamp: new Date().toISOString() });
-  localStorage.setItem('historicoTecla', JSON.stringify(historico));
-  atualizarEmocoes(frase);
-  carregarHistorico();
-  atualizarBadges();
+function ativarBarra(nivel){
+  for(let i=1;i<=3;i++){
+    document.getElementById("barra"+i).style.display = (i<=nivel) ? "block" : "none";
+  }
 }
 
-function carregarHistorico() {
-  const historicoDiv = document.getElementById('historico');
-  historicoDiv.innerHTML = '';
-  let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
-  let entradas = historico[usuarioAtual.nome] || [];
-  entradas.slice().reverse().forEach(e => {
-    const div = document.createElement('div');
-    div.className = 'entry';
-    div.innerText = `[${new Date(e.timestamp).toLocaleString()}] ${e.frase}`;
-    historicoDiv.appendChild(div);
+function carregarLinks(userData){
+  ["barra1","barra2","barra3"].forEach(barra=>{
+    const ul = document.getElementById("links-"+barra);
+    ul.innerHTML = "";
+    (userData.versoes[barra]||[]).forEach(link=>{
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+      ul.appendChild(li);
+    });
   });
 }
 
-function atualizarEmocoes(frase) {
-  if (frase.includes('feliz')) emocaoCounts.feliz++;
-  else if (frase.includes('triste')) emocaoCounts.triste++;
-  else if (frase.includes('brincar')) emocaoCounts.brincar++;
-  else if (frase.includes('dor')) emocaoCounts.dor++;
+function responder(){
+  if(!currentUser) return alert("Faça login primeiro");
+  const entrada = document.getElementById("entrada").value;
+  const idioma = document.getElementById("idioma").value;
+  let resposta = idioma==="pt-PT" ? `Tecla disse: '${entrada}'. Vamos entender com carinho e atenção.` : `Tecla said: '${entrada}'. Let's listen with care and love.`;
+  document.getElementById("saida").innerText = resposta;
 
-  criarGrafico();
+  const synth = window.speechSynthesis;
+  const utterThis = new SpeechSynthesisUtterance(resposta);
+  utterThis.lang = idioma;
+  synth.speak(utterThis);
+
+  salvarFrase(entrada);
 }
 
-function criarGrafico() {
-  const ctx = document.getElementById('graficoEmocoes').getContext('2d');
-  if (window.graficoEmocoesInstance) window.graficoEmocoesInstance.destroy();
+function usarFrase(texto){
+  document.getElementById("entrada").value = texto;
+  responder();
+}
 
-  window.graficoEmocoesInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Feliz','Triste','Brincar','Dor'],
-      datasets: [{
-        label: 'Ocorrências',
-        data: [emocaoCounts.feliz, emocaoCounts.triste, emocaoCounts.brincar, emocaoCounts.dor],
-        backgroundColor: ['#f1c40f','#3498db','#2ecc71','#e74c3c']
-      }]
-    },
-    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+function salvarFrase(frase){
+  if(!currentUser) return;
+  currentUser.historico.push(frase);
+  if(currentUser.historico.length>50) currentUser.historico.shift();
+  localStorage.setItem("historico_"+currentUser.username, JSON.stringify(currentUser.historico));
+}
+
+function falar(){
+  const idioma = document.getElementById("idioma").value;
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = idioma;
+  recognition.start();
+  recognition.onresult = function(event){
+    const textoFalado = event.results[0][0].transcript;
+    document.getElementById("entrada").value = textoFalado;
+    responder();
+  }
+}
+
+window.onload = function(){
+  usersDB.forEach(user=>{
+    let historico = JSON.parse(localStorage.getItem("historico_"+user.username)) || [];
+    user.historico = historico;
   });
-}
-
-function atualizarBadges() {
-  const badgesDiv = document.getElementById('badges');
-  badgesDiv.innerHTML = '';
-  const badges = [];
-  if (emocaoCounts.feliz >= 3) badges.push('😊 Feliz 3x');
-  if (emocaoCounts.brincar >= 3) badges.push('🧸 Brincou bastante');
-  if (emocaoCounts.triste >= 3) badges.push('😢 Triste 3x');
-
-  badges.forEach(b => {
-    const li = document.createElement('li');
-    li.innerText = b;
-    badgesDiv.appendChild(li);
-  });
-}
-
-function responder() {
-  const entrada = document.getElementById('entrada').value.trim();
-  if (!entrada) return;
-  salvarHistorico(entrada);
-
-  // Recomendações inteligentes simples
-  let recomendacao = '';
-  if (entrada.includes('triste')) recomendacao = '💡 Sugestão: Acalme a criança e ofereça suporte.';
-  else if (entrada.includes('feliz')) recomendacao = '💡 Sugestão: Continue com atividades positivas.';
-  else if (entrada.includes('brincar')) recomendacao = '💡 Sugestão: Ofereça brinquedos preferidos.';
-  else if (entrada.includes('dor')) recomendacao = '💡 Sugestão: Verifique se precisa de ajuda médica.';
-  else recomendacao = '💡 Sugestão: Observe e interaja com cuidado.';
-
-  const utterThis = new SpeechSynthesisUtterance(entrada + ' ' + recomendacao);
-  utterThis.lang = 'pt-PT';
-  window.speechSynthesis.speak(utterThis);
-
-  alert(recomendacao);
-  document.getElementById('entrada').value = '';
-}
-
-function exportarHistorico() {
-  let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
-  let entradas = historico[usuarioAtual.nome] || [];
-  if (entradas.length === 0) { alert('Sem histórico para exportar'); return; }
-
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entradas, null, 2));
-  const downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href", dataStr);
-  downloadAnchorNode.setAttribute("download", usuarioAtual.nome + "_historico.json");
-  document.body.appendChild(downloadAnchorNode);
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
 }
 </script>
 </body>
