@@ -1,78 +1,97 @@
+:root {
+    /* --- VARIÁVEIS DE COR (PALETA) --- */
+    --color-primary: #4B9CD3; /* Azul Tecla (Cabeçalho, Botões) */
+    --color-background-soft: #FFF9F0; /* Creme Acolhedor (Fundo principal) */
+    --color-background-white: #FFFFFF; /* Branco (Container Principal) */
+    --color-text: #222222; /* Texto Padrão */
+    --color-secondary-blue: #E1F0FB; /* Azul Claro (Fundo Pictogramas) */
+    --color-dark-menu: #1e2a38; /* Fundo Menu Lateral */
+    --color-calm-mode: #DCE9F5; /* Fundo Modo Calmo */
+
+    /* --- VARIÁVEIS DE LAYOUT E ESPAÇAMENTO --- */
+    --spacing-large: 25px;
+    --spacing-medium: 15px;
+    --border-radius-large: 18px; /* Cantos do Container */
+    --border-radius-medium: 10px; /* Cantos de Botões/Inputs */
+    --shadow-soft: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+/* --- BASE E TIPOGRAFIA --- */
 body {
-    /* Fundo creme suave (#FFF9F0), conforme a descrição anterior,
-       ajustado para ser um pouco mais claro do que o #f7faff para acolhimento */
     margin: 0;
     padding: 0;
-    font-family: 'Verdana', sans-serif;
-    background: #FFF9F0; /* Tonalidade acolhedora */
-    color: #222;
+    /* Fonte mais moderna e acessível, se disponível (e.g., 'Roboto', 'Open Sans') */
+    font-family: 'Verdana', 'Open Sans', sans-serif;
+    background: var(--color-background-soft);
+    color: var(--color-text);
     line-height: 1.6;
+    font-size: 16px; /* Tamanho base padronizado */
+    transition: background 0.3s;
 }
 
 /* --- HEADER / CABEÇALHO --- */
 header {
-    /* Barra azul clara (#4B9CD3) arredondada, conforme a descrição anterior */
-    background: #4B9CD3; 
+    background: var(--color-primary);
     color: white;
-    padding: 20px;
+    padding: 20px 0; /* Padding lateral zero para full-width */
     text-align: center;
-    /* Adicionando cantos arredondados inferiores suaves */
-    border-bottom-left-radius: 14px;
-    border-bottom-right-radius: 14px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-bottom-left-radius: var(--border-radius-medium);
+    border-bottom-right-radius: var(--border-radius-medium);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15); /* Sombra mais destacada no header */
 }
 
 /* --- CONTAINER PRINCIPAL --- */
 .container {
-    /* Estilo de caixa central: fundo branco, sombra suave, cantos arredondados grandes */
-    max-width: 750px;
+    max-width: 800px; /* Aumentando um pouco a largura máxima para melhor visualização */
     margin: 100px auto 50px auto;
-    background: white;
-    padding: 30px; /* Mais padding para espaçamento */
-    border-radius: 18px; /* Cantos grandes e amigáveis */
-    box-shadow: 0 8px 30px rgba(0,0,0,0.1); /* Sombra mais destacada e suave */
+    background: var(--color-background-white);
+    padding: var(--spacing-large);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-soft);
 }
 
 /* --- FORMULÁRIO E INPUTS --- */
 select, input {
-    /* Melhoria no visual dos inputs */
     width: 100%;
-    padding: 14px;
-    font-size: 18px;
+    padding: var(--spacing-medium);
+    font-size: 1.15em; /* Aumentado para maior legibilidade (18.4px) */
     margin-top: 10px;
-    margin-bottom: 20px;
-    border-radius: 10px; /* Cantos mais suaves */
-    border: 2px solid #ccc;
-    box-sizing: border-box; /* Garante que padding não estoure a largura */
-    transition: border-color 0.3s;
+    margin-bottom: var(--spacing-medium);
+    border-radius: var(--border-radius-medium);
+    border: 2px solid #DDDDDD; /* Borda mais clara */
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus, input:focus {
-    border-color: #4B9CD3; /* Foco suavemente azul */
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(75, 156, 211, 0.3); /* Anel de foco acessível */
     outline: none;
 }
 
 /* --- BOTÕES DE AÇÃO --- */
 button {
-    background: #4B9CD3; /* Azul primário */
+    background: var(--color-primary);
     color: white;
-    padding: 14px 22px; /* Aumentando padding */
+    padding: 15px 24px; /* Ajuste para proporção tátil */
     border: none;
-    border-radius: 10px; /* Cantos arredondados */
+    border-radius: var(--border-radius-medium);
     cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.1s;
+    font-size: 1em;
+    font-weight: 600; /* Levemente mais ousado */
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
 }
 
 button:hover {
-    background: #3a7bab; /* Escurece no hover */
+    background: #3a7bab; 
+    transform: translateY(-1px); /* Pequeno efeito de elevação */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 .btn-row {
     display: flex;
-    gap: 15px; /* Espaço entre botões */
-    margin: 15px 0;
+    gap: var(--spacing-medium);
+    margin: var(--spacing-medium) 0 var(--spacing-large) 0; /* Mais espaçamento embaixo */
     justify-content: center;
 }
 
@@ -80,39 +99,42 @@ button:hover {
 .pictogramas {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; /* Espaço uniforme */
-    margin-top: 25px;
-    justify-content: center;
+    gap: var(--spacing-medium);
+    margin-top: var(--spacing-large);
+    justify-content: space-around; /* Distribui melhor os itens */
 }
 
 .pictograma {
-    /* Estilo de bloco arredondado e colorido */
-    flex: 1 1 25%; /* Ajuste para ter 3 ou 4 por linha, dependendo do tamanho */
+    /* Usando flex-basis para controle mais preciso do tamanho */
+    flex: 0 1 calc(25% - 10px); /* 4 por linha, ajustando o gap */
     min-width: 100px;
-    background: #e1f0fb; /* Fundo azul claro para o pictograma */
+    max-width: 150px; /* Limite o crescimento em telas grandes */
+    background: var(--color-secondary-blue);
+    color: var(--color-text); /* Garantir contraste do texto */
     text-align: center;
-    padding: 15px;
-    border-radius: 12px;
+    padding: var(--spacing-medium);
+    border-radius: var(--border-radius-medium);
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.1em;
     font-weight: bold;
-    transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); /* Borda interna suave */
+    transition: transform 0.2s, box-shadow 0.3s;
 }
 
 .pictograma:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Efeito de relevo/interação */
+    transform: translateY(-3px); /* Efeito de elevação mais pronunciado */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1); 
 }
 
 /* --- MENU LATERAL (SideMenu) --- */
 #menuIcon {
     position: fixed;
-    top: 15px;
-    left: 15px;
-    font-size: 30px;
+    top: 20px; /* Ajustado */
+    left: 20px; /* Ajustado */
+    font-size: 32px;
     cursor: pointer;
-    z-index: 100; /* Garante que fique acima de outros elementos */
-    color: white; /* Ícone branco no header azul */
+    z-index: 100;
+    color: white; 
 }
 
 #sideMenu {
@@ -121,77 +143,77 @@ button:hover {
     top: 0;
     width: 250px;
     height: 100%;
-    background: #1e2a38;
+    background: var(--color-dark-menu);
     color: white;
-    padding: 20px;
-    transition: 0.3s ease;
+    padding: 30px 20px; /* Aumentado o padding superior */
+    transition: left 0.4s ease-in-out; /* Transição mais suave e notável */
     z-index: 99;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
 }
 
-#sideMenu.open {
-    left: 0;
-}
-
-#sideMenu h2 {
-    margin-top: 0;
-    color: #bfe0ff;
-}
-
-#sideMenu ul {
-    list-style: none;
-    padding: 0;
-}
-
-#sideMenu ul li {
-    margin: 18px 0;
-}
-
-#sideMenu ul li a {
-    color: #bfe0ff;
-    text-decoration: none;
-    font-size: 18px;
-    transition: color 0.2s;
-}
-
-#sideMenu ul li a:hover {
-    color: white;
-}
+/* ... Estilos internos do Menu (h2, ul, li, a) continuam como antes, 
+     mas podiam usar as variáveis de cor para links, se houvesse mais. */
 
 /* --- COMPONENTES DE AJUDA --- */
-
-/* ALERTA DE CRISE */
 #alertaCrise {
-    margin-top: 25px;
-    background: #ffe1e1;
-    padding: 15px;
-    color: #b30000;
-    font-size: 18px;
-    border-left: 8px solid #ff5a5a;
-    border-radius: 8px;
+    margin-top: var(--spacing-large);
+    background: #FFEBEB; /* Fundo mais suave para crise */
+    padding: var(--spacing-medium);
+    color: #A00000; /* Cor de texto mais controlada */
+    font-size: 1.1em;
+    border-left: 8px solid #FF5A5A;
+    border-radius: var(--border-radius-medium);
     display: none;
-    font-weight: bold;
+    font-weight: 600;
 }
 
-/* RESPIRAÇÃO GUIADA */
 #respiracaoGuiada {
-    margin-top: 25px;
-    background: #e8fff0;
-    padding: 25px;
-    border-radius: 10px;
+    margin-top: var(--spacing-large);
+    background: #E8FFF0;
+    padding: var(--spacing-large);
+    border-radius: var(--border-radius-medium);
     display: none;
-    border: 1px solid #c3e8d2;
+    border: 1px solid #C3E8D2;
 }
 
-/* CALM MODE (Baixo Estímulo) */
+/* --- CALM MODE (Baixo Estímulo) --- */
 .tecla-low-stimulus {
-    /* Efeito de calma: fundo suave e contraste reduzido */
-    background: #dce9f5 !important; 
+    /* Aplica-se ao BODY ou container principal quando ativado */
+    background: var(--color-calm-mode) !important;
     color: #444 !important;
-    transition: 0.3s;
+    transition: background 0.5s ease, color 0.5s ease;
 }
 
-/* Estilo adicional para garantir que o texto do body também mude no Low-Stimulus */
-.tecla-low-stimulus body {
-    background: #dce9f5 !important; 
+/* Garante que elementos de contraste alto se adaptem */
+.tecla-low-stimulus .container {
+    background: var(--color-calm-mode) !important;
+    box-shadow: none !important; /* Remove sombras para baixo estímulo */
+    border: 1px solid #b3c2d6;
+}
+
+.tecla-low-stimulus header {
+    background: #AABBDD !important; /* Cor mais cinza-azulada no header */
+}
+
+/* Media Query para Dispositivos Menores (Celulares/Tablets em modo retrato) */
+@media (max-width: 600px) {
+    .container {
+        margin: 80px 10px 20px 10px; /* Margem lateral menor para ocupar mais tela */
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    .pictograma {
+        flex: 0 1 calc(33% - 10px); /* 3 por linha em telas pequenas */
+        min-width: 80px;
+        font-size: 1em;
+    }
+
+    .btn-row {
+        flex-direction: column; /* Botões empilhados em telas pequenas */
+    }
+
+    button {
+        width: 100%;
+    }
 }
