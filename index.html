@@ -1,144 +1,114 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🧠 Tecla Lite Premium</title>
-<style>
-body { font-family: Comic Sans MS, Arial, sans-serif; margin:0; padding:20px; background:#fff9f0; color:#333; }
-header { text-align:center; padding:10px; background:#4b9cd3; color:white; border-radius:8px; }
-.container { max-width:650px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-select,input[type="text"]{width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px;}
-button{background:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer;}
-.pictogramas{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
-.pictograma{flex:1 1 30%; background:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad;}
-.pictograma:hover{background:#cde9fa;}
-#saida{margin-top:20px; font-size:20px; color:#222; padding:10px; background:#e6f7ff; border-radius:8px;}
-.barras {display:flex; justify-content:space-between; margin-top:20px;}
-.barra {flex:1; margin:0 5px; padding:10px; border-radius:8px; text-align:center; color:white;}
-.free {background:#7a7a7a;} .premium {background:#f39c12;} .paid {background:#27ae60;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 Tecla Lite Premium</title>
+  <style>
+    body { font-family: Comic Sans MS, Arial, sans-serif; margin:0; padding:20px; background:#fff9f0; color:#333; }
+    header { text-align:center; padding:10px; background:#4b9cd3; color:white; border-radius:8px; }
+    .container { max-width:650px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    select, input[type="text"] { width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px; }
+    button { background:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer; }
+    .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+    .pictograma { flex:1 1 30%; background:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad; }
+    .pictograma:hover { background:#cde9fa; }
+    #saida { margin-top:20px; font-size:20px; color:#222; padding:10px; background:#e6f7ff; border-radius:8px; }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>🧠 Tecla Lite</h1>
+    <p>Ferramenta bilíngue com pictogramas e fala para crianças autistas</p>
+  </header>
+  <div class="container">
+    <label for="idioma">🌍 Escolha o idioma:</label>
+    <select id="idioma">
+      <option value="pt-PT">Português</option>
+      <option value="en-US">English</option>
+    </select>
 
-<header>
-<h1>🧠 Tecla Lite Premium</h1>
-<p>Ferramenta bilíngue com pictogramas e fala para crianças autistas</p>
-</header>
+    <label for="entrada">💬 Digite ou fale o que a criança deseja:</label>
+    <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
+    <button onclick="responder()">🔊 Falar</button>
+    <button onclick="falar()">🎙️ Falar com Tecla</button>
 
-<div class="container">
+    <div class="pictogramas">
+      <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
+      <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
+      <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
+      <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
+      <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
+      <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
+    </div>
 
-<!-- Barras de acesso -->
-<div class="barras">
-  <div id="barraFree" class="barra free">FREE</div>
-  <div id="barraPremium" class="barra premium">PREMIUM</div>
-  <div id="barraPaid" class="barra paid">PAID</div>
-</div>
+    <button onclick="comprarAssinatura()">💎 Assinar Premium</button>
 
-<label for="idioma">🌍 Escolha o idioma:</label>
-<select id="idioma">
-<option value="pt-PT">Português</option>
-<option value="en-US">English</option>
-</select>
+    <div id="saida"></div>
+  </div>
 
-<label for="entrada">💬 Digite ou fale o que a criança deseja:</label>
-<input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
-<button onclick="responder()">🔊 Falar</button>
-<button onclick="falar()">🎙️ Falar com Tecla</button>
-<button id="btnAssinatura" onclick="comprarAssinatura()">💎 Assinar Premium</button>
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    const stripe = Stripe("SUA_CHAVE_PUBLICA_DO_STRIPE");
 
-<div class="pictogramas">
-  <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
-  <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
-  <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
-  <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
-  <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
-  <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
-</div>
+    async function comprarAssinatura() {
+      const response = await fetch("/criar-sessao-stripe", { method: "POST" });
+      const session = await response.json();
+      const result = await stripe.redirectToCheckout({ sessionId: session.id });
+      if(result.error) alert(result.error.message);
+    }
 
-<div id="saida"></div>
+    function responder() {
+      const entrada = document.getElementById("entrada").value;
+      const idioma = document.getElementById("idioma").value;
+      let resposta = idioma === "pt-PT"
+        ? "Tecla disse: '" + entrada + "'. Vamos entender com carinho e atenção."
+        : "Tecla said: '" + entrada + "'. Let's listen with care and love.";
 
-</div>
+      document.getElementById("saida").innerText = resposta;
+      const synth = window.speechSynthesis;
+      const utterThis = new SpeechSynthesisUtterance(resposta);
+      utterThis.lang = idioma;
+      synth.speak(utterThis);
 
-<script>
-// Simulação de usuário (no futuro conectar a backend)
-let userData = { level: 'free' }; // free, premium, paid
-const token = "simulacaoToken123"; // JWT simulado
+      salvarFrase(entrada);
+    }
 
-// Funções de Tecla
-function responder() {
-  const entrada = document.getElementById("entrada").value;
-  const idioma = document.getElementById("idioma").value;
-  let resposta = idioma === "pt-PT" ? 
-    `Tecla disse: '${entrada}'. Vamos entender com carinho e atenção.` : 
-    `Tecla said: '${entrada}'. Let's listen with care and love.`;
+    function usarFrase(texto) { document.getElementById("entrada").value = texto; responder(); }
 
-  document.getElementById("saida").innerText = resposta;
-  const synth = window.speechSynthesis;
-  const utterThis = new SpeechSynthesisUtterance(resposta);
-  utterThis.lang = idioma;
-  synth.speak(utterThis);
+    function salvarFrase(frase) {
+      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
+      historico.push(frase);
+      if(historico.length>5) historico.shift();
+      localStorage.setItem("frasesTecla", JSON.stringify(historico));
+    }
 
-  salvarFrase(entrada);
-}
+    function falar() {
+      const idioma = document.getElementById("idioma").value;
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = idioma;
+      recognition.start();
 
-function usarFrase(texto) {
-  document.getElementById("entrada").value = texto;
-  responder();
-}
+      recognition.onresult = function(event) {
+        const textoFalado = event.results[0][0].transcript;
+        document.getElementById("entrada").value = textoFalado;
+        responder();
+      };
+    }
 
-function salvarFrase(frase) {
-  let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
-  historico.push(frase);
-  if(historico.length>5) historico.shift();
-  localStorage.setItem("frasesTecla", JSON.stringify(historico));
-}
-
-function falar() {
-  const idioma = document.getElementById("idioma").value;
-  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  recognition.lang = idioma;
-  recognition.start();
-
-  recognition.onresult = function(event) {
-    const textoFalado = event.results[0][0].transcript;
-    document.getElementById("entrada").value = textoFalado;
-    responder();
-  };
-}
-
-// Interface de Barras
-function atualizarBarras() {
-  document.getElementById("barraFree").style.opacity = userData.level==='free'?1:0.3;
-  document.getElementById("barraPremium").style.opacity = userData.level==='premium'?1:0.3;
-  document.getElementById("barraPaid").style.opacity = userData.level==='paid'?1:0.3;
-
-  document.getElementById("btnAssinatura").style.display = userData.level==='premium'?'none':'inline-block';
-}
-
-// Simula compra de assinatura
-async function comprarAssinatura() {
-  alert("Redirecionando para pagamento simulado...");
-  // No futuro, integração real com Stripe
-  userData.level='premium';
-  atualizarBarras();
-}
-
-// Carregar histórico
-window.onload = function() {
-  let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
-  if(historico.length > 0){
-    const sugestoes = historico.map(frase => `<li onclick="document.getElementById('entrada').value='${frase}'; responder();">🔁 ${frase}</li>`).join('');
-    const lista = document.createElement("ul");
-    lista.innerHTML = `<strong>💡 Sugestões:</strong>` + sugestoes;
-    lista.style.listStyleType="none";
-    lista.style.paddingLeft="0";
-    lista.style.marginTop="15px";
-    document.querySelector(".container").appendChild(lista);
-  }
-  atualizarBarras();
-};
-</script>
-
+    window.onload = function() {
+      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
+      if(historico.length > 0) {
+        const sugestoes = historico.map(frase => `<li onclick="document.getElementById('entrada').value='${frase}'">🔁 ${frase}</li>`).join('');
+        const lista = document.createElement("ul");
+        lista.innerHTML = `<strong>💡 Sugestões:</strong>` + sugestoes;
+        lista.style.listStyleType = "none";
+        lista.style.paddingLeft = "0";
+        lista.style.marginTop = "15px";
+        document.querySelector(".container").appendChild(lista);
+      }
+    };
+  </script>
 </body>
 </html>
