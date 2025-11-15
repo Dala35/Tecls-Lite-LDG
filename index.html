@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tecla Premium - 3 Barras</title>
+<title>Tecla Premium Dinâmica</title>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <style>
 body{font-family:Arial,sans-serif;background:#fff9f0;padding:20px;color:#333;}
 .container{max-width:700px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.1);}
@@ -14,7 +15,7 @@ button{background:#4b9cd3;color:white;padding:10px 15px;margin-top:10px;border:n
 </head>
 <body>
 <div class="container">
-<h1>🧠 Tecla Premium</h1>
+<h1>🧠 Tecla Premium Dinâmica</h1>
 
 <h3>Login / Registro</h3>
 <input type="text" id="username" placeholder="Usuário"/>
@@ -43,8 +44,18 @@ button{background:#4b9cd3;color:white;padding:10px 15px;margin-top:10px;border:n
 </div>
 
 <script>
+const socket = io("http://localhost:5000");
 let token="";
 let userData={};
+
+socket.on("barraAtualizada", ({ barra, link }) => {
+  const ul=document.querySelector("#"+barra+" ul");
+  const li=document.createElement("li");
+  li.innerHTML=`<a href="${link}" target="_blank">${link}</a>`;
+  ul.appendChild(li);
+  if(!userData.barras[barra]) userData.barras[barra]=[];
+  userData.barras[barra].push(link);
+});
 
 function register(){
   fetch("http://localhost:5000/register",{method:"POST",headers:{"Content-Type":"application/json"},
@@ -92,6 +103,7 @@ function carregarBarras(){
   ["gratuita","intermediaria","premium"].forEach(barra=>{
     const ul=document.querySelector("#"+barra+" ul");
     ul.innerHTML="";
+    if(!userData.barras[barra]) userData.barras[barra]=[];
     userData.barras[barra].forEach(link=>{
       const li=document.createElement("li");
       li.innerHTML=`<a href="${link}" target="_blank">${link}</a>`;
@@ -102,5 +114,6 @@ function carregarBarras(){
 </script>
 </body>
 </html>
+
 
 
