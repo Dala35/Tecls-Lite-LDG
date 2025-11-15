@@ -162,7 +162,7 @@ function responder(){
   const idioma = document.getElementById("idioma").value;
   const emo = detectarEmocao(entrada);
   const fraseSug = sugerirFrase(emo, []);
-  let resposta = idioma==="pt-PT"
+  let resposta = idioma==="pt-PT"fr-FR"en-US"
     ? `Tecla disse: '${entrada}'. ${fraseSug}`
     : `Tecla said: '${entrada}'. ${fraseSug}`;
   document.getElementById("saida").innerText = resposta;
