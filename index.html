@@ -4,213 +4,491 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tecla Ultra Avançada</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#fff9f0; color:#333;}
-  header { text-align:center; padding:10px; background:#4b9cd3; color:white; border-radius:8px;}
-  .container { max-width:800px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-  select, input[type="text"] { width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px;}
-  button { background:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer;}
-  .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
-  .pictograma { flex:1 1 30%; background:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad;}
-  .pictograma:hover { background:#cde9fa;}
-  #saida, #alertas { margin-top:20px; font-size:20px; color:#222; padding:10px; background:#e6f7ff; border-radius:8px;}
-  .alert { margin-top:10px; padding:10px; background:#ffcccc; border-radius:8px; font-weight:bold; color:#900;}
-  .barra-versoes { display:flex; justify-content:space-around; margin-top:15px;}
-  .barra { padding:10px; border-radius:8px; cursor:pointer; flex:1; text-align:center; margin:0 5px; color:white; font-weight:bold;}
-  .free { background:#4caf50;}
-  .intermediate { background:#ff9800;}
-  .premium { background:#f44336;}
-  .respiracao { margin-top:15px; font-size:18px; color:#007acc;}
-  .iframe-versao { width:100%; height:300px; margin-top:15px; border:2px solid #4b9cd3; border-radius:8px; }
-  canvas { margin-top:20px; border:1px solid #ccc; border-radius:8px; background:#f9f9f9; }
-  ul { margin-top:15px; padding-left:0; list-style:none;}
-  li { cursor:pointer; margin-bottom:5px; }
+    body { font-family: 'Inter', sans-serif; margin:0; padding:20px; background:#f8fafc; color:#333; }
+    header { text-align:center; padding:15px; background:#1d4ed8; color:white; border-radius:12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+    .container { max-width:1000px; margin:auto; background:white; padding:30px; border-radius:18px; box-shadow:0 10px 20px rgba(0,0,0,0.05); }
+    select, input[type="text"] { width:100%; padding:14px; margin-top:10px; font-size:16px; border:2px solid #ccc; border-radius:10px; transition: border-color 0.3s; }
+    select:focus, input[type="text"]:focus { border-color: #2563eb; outline: none; }
+    button { background:#2563eb; color:white; padding:14px 25px; font-size:16px; border:none; border-radius:10px; margin-top:10px; cursor:pointer; transition: background-color 0.3s, transform 0.1s; }
+    button:hover { background:#1e40af; }
+    button:active { transform: scale(0.98); }
+    .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; justify-content: center; }
+    .pictograma { flex:1 1 30%; max-width: calc(33.33% - 10px); background:#eff6ff; padding:16px; font-size:24px; text-align:center; border-radius:12px; cursor:pointer; border:1px solid #bfdbfe; transition: background-color 0.3s, box-shadow 0.3s; }
+    .pictograma:hover { background:#dbeafe; box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2); }
+    #saida, #alertas, #orientacaoDala { margin-top:25px; font-size:18px; padding:20px; border-radius:12px; }
+    #saida { background:#e0f2fe; color:#0c4a6e; border-left: 5px solid #38bdf8; }
+    #alertas { background:#fef3c7; color:#92400e; border-left: 5px solid #fbbf24; }
+    #orientacaoDala { background:#ecfdf5; color:#065f46; border-left: 5px solid #10b981; }
+    .alert { margin-top:10px; padding:12px; border-radius:8px; font-weight:bold; }
+    .barra-versoes { display:flex; justify-content:space-around; margin-top:25px; gap:10px; }
+    .barra { padding:12px; border-radius:10px; cursor:pointer; flex:1; text-align:center; color:white; font-weight:bold; transition: opacity 0.3s; }
+    .barra.free { background:#10b981;} /* Green */
+    .barra.intermediate { background:#f97316;} /* Orange */
+    .barra.premium { background:#ef4444;} /* Red */
+    .barra:not(.active) { opacity: 0.7; }
+    .barra.active { box-shadow: 0 0 0 4px #2563eb; opacity: 1; }
+    .respiracao { margin-top:15px; font-size:18px; font-weight: bold; color:#1e40af; text-align: center; }
+    .iframe-versao { width:100%; height:300px; margin-top:20px; border:2px solid #2563eb; border-radius:12px; }
+    canvas { margin-top:20px; border:1px solid #e5e7eb; border-radius:12px; background:#f9fafb; width: 100%; height: 250px; }
+    #historicoVersoes { margin-top:15px; padding-left:0; list-style:none; }
+    #historicoVersoes li { cursor:pointer; margin-bottom:8px; padding:8px; background:#f3f4f6; border-radius:6px; transition: background-color 0.2s; }
+    #historicoVersoes li:hover { background:#e5e7eb; }
+    .loading-dot { animation: dot-flicker 1.5s infinite; }
+    .loading-dot:nth-child(2) { animation-delay: 0.5s; }
+    .loading-dot:nth-child(3) { animation-delay: 1s; }
+    @keyframes dot-flicker {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
 </style>
 </head>
 <body>
-<header>
-  <h1>🧠 Tecla Ultra Avançada</h1>
-  <p>Histórico, gráficos de alertas e predição preventiva para cuidadores e crianças</p>
-</header>
-
 <div class="container">
-  <label for="idioma">🌍 Escolha o idioma:</label>
-  <select id="idioma">
-    <option value="pt-PT">Português</option>
-    <option value="en-US">English</option>
-  </select>
+    <header>
+        <h1 class="text-3xl font-extrabold">🧠 Tecla Ultra Avançada</h1>
+        <p class="text-sm mt-1">Histórico, gráficos de alertas, predição avançada e Orientação Imediata Dala</p>
+    </header>
 
-  <label for="entrada">💬 Digite ou fale o que deseja:</label>
-  <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
-  <button onclick="responder()">🔊 Falar</button>
-  <button onclick="falar()">🎙️ Falar com Tecla</button>
+    <div class="mt-8">
+        <label for="idioma" class="text-sm font-medium text-gray-700">🌍 Escolha o idioma:</label>
+        <select id="idioma">
+            <option value="pt-PT">Português</option>
+            <option value="en-US">English</option>
+        </select>
 
-  <div class="pictogramas">
-    <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
-    <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
-    <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
-    <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
-    <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
-    <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
-  </div>
+        <label for="entrada" class="text-sm font-medium text-gray-700 mt-4 block">💬 Digite ou fale o que deseja:</label>
+        <div class="flex space-x-2">
+            <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" class="flex-grow" />
+            <button onclick="responder()" class="flex-shrink-0">🔊 Tecla</button>
+            <button onclick="falar()" class="flex-shrink-0">🎙️ Falar</button>
+        </div>
 
-  <div class="barra-versoes">
-    <div class="barra free" onclick="abrirVersao('free')">Gratuita</div>
-    <div class="barra intermediate" onclick="abrirVersao('intermediate')">Intermediária</div>
-    <div class="barra premium" onclick="abrirVersao('premium')">Premium</div>
-  </div>
+        <div class="pictogramas">
+            <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
+            <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
+            <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
+            <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
+            <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
+            <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
+        </div>
 
-  <iframe class="iframe-versao" id="iframeVersao"></iframe>
-  <div id="saida"></div>
-  <div id="alertas"></div>
-  <div class="respiracao" id="respiracao"></div>
-  <canvas id="graficoAlertas" width="750" height="250"></canvas>
-  <ul id="historicoVersoes"></ul>
+        <div class="barra-versoes">
+            <div class="barra free active" id="btn-free" onclick="abrirVersao('free')">Gratuita</div>
+            <div class="barra intermediate" id="btn-intermediate" onclick="abrirVersao('intermediate')">Intermediária</div>
+            <div class="barra premium" id="btn-premium" onclick="abrirVersao('premium')">Premium</div>
+        </div>
+
+        <!-- Feedback e Alertas -->
+        <div id="saida"></div>
+        <!-- Alertas Imediatos e de Predição aparecerão aqui -->
+        <div id="alertas"></div> 
+        <div id="orientacaoDala">
+            <h3 class="font-bold text-lg mb-2 text-green-700">✨ Orientação Imediata Dala</h3>
+            <p id="dala-insight-text" class="text-sm text-green-600 italic">Aguardando a próxima interação para análise.</p>
+        </div>
+        <div class="respiracao" id="respiracao"></div>
+
+        <!-- Histórico e Gráfico (Dashboard Técnico) -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-3 text-gray-700">Log de Histórico (Últimos)</h3>
+                <ul id="historicoVersoes"></ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-3 text-gray-700">Gráfico de Alertos por Versão</h3>
+                <canvas id="graficoAlertas"></canvas>
+            </div>
+        </div>
+        
+        <!-- Iframe da Versão (Ainda estático para simulação) -->
+        <iframe class="iframe-versao" id="iframeVersao" src="https://placehold.co/800x300/e0f2fe/1e40af?text=Simulação+Versão+Tecla+GRATUITA"></iframe>
+    </div>
 </div>
 
 <script>
-let versaoAtual = 'free';
-let dadosLogs = [];
+    // --- CONSTANTES PARA A PREDIÇÃO AVANÇADA ---
+    const JANELA_TEMPO_MS = 10 * 60 * 1000; // 10 minutos em milissegundos (600000ms)
+    const LIMITE_PONTUACAO_PREDICAO = 5; // Pontos para disparar o alerta de risco elevado
 
-function responder() {
-  const entrada = document.getElementById("entrada").value;
-  const idioma = document.getElementById("idioma").value;
-  let resposta = idioma==='pt-PT'
-    ?"Tecla disse: '" + entrada + "'. Vamos entender com carinho e atenção."
-    :"Tecla said: '" + entrada + "'. Let's listen with care and love.";
+    // Configuração Gemini API
+    const apiKey = ""; 
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-  document.getElementById("saida").innerText=resposta;
-  falarTexto(resposta, idioma);
-  salvarFrase(entrada);
-  processarEntrada(entrada);
-  atualizarHistorico();
-  atualizarGrafico();
-}
+    let versaoAtual = 'free';
+    let dadosLogs = [];
+    const MAX_LOGS = 50; 
+    
+    // Variáveis do Gráfico
+    let chart;
+    let ctx;
+    const cores = {free:'#10b981', intermediate:'#f97316', premium:'#ef4444'};
 
-function falarTexto(texto, idioma){
-  const synth = window.speechSynthesis;
-  const utterThis = new SpeechSynthesisUtterance(texto);
-  utterThis.lang = idioma;
-  synth.speak(utterThis);
-}
+    // -----------------------------------------------------------
+    // 1. LÓGICA DE INTERAÇÃO E RESPOSTA
+    // -----------------------------------------------------------
+    
+    /**
+     * Calcula a pontuação de severidade de uma frase e determina se é um alerta simples.
+     */
+    function calcularSeveridadeAlerta(frase) {
+        const texto = frase.toLowerCase();
+        let score = 0;
+        let isAlert = false;
 
-function usarFrase(texto){
-  document.getElementById("entrada").value = texto;
-  responder();
-}
+        // Define pesos para as palavras-chave (Maior peso = Maior urgência)
+        const pesos = {
+            'dor': 3,
+            'triste': 2,
+            'bravo': 1,
+            'irritado': 1,
+            'zangado': 1,
+            'doente': 2,
+            'mal': 1, // Ex: "Estou mal"
+        };
 
-function salvarFrase(frase){
-  let key="frasesTecla_"+versaoAtual;
-  let historico=JSON.parse(localStorage.getItem(key))||[];
-  historico.push(frase);
-  if(historico.length>10) historico.shift();
-  localStorage.setItem(key, JSON.stringify(historico));
-  dadosLogs.push({versao:versaoAtual, frase, alerta: frase.includes('triste')||frase.includes('dor')});
-}
+        for (const palavra in pesos) {
+            if (texto.includes(palavra)) {
+                score += pesos[palavra];
+                isAlert = true;
+            }
+        }
+        
+        // Se a criança usar MAIÚSCULAS ou muitos pontos de exclamação, aumenta-se o peso emocional
+        if (frase.toUpperCase() === frase && frase.length > 5) {
+            score += 1;
+        }
+        if ((frase.match(/!/g) || []).length >= 2) {
+            score += 1;
+        }
 
-function falar(){
-  const idioma=document.getElementById("idioma").value;
-  const recognition=new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  recognition.lang=idioma;
-  recognition.start();
-  recognition.onresult=function(event){
-    const textoFalado=event.results[0][0].transcript;
-    document.getElementById("entrada").value=textoFalado;
-    responder();
-  }
-}
-
-function processarEntrada(entrada){
-  const alertasDiv=document.getElementById("alertas");
-  if(entrada.includes('triste')||entrada.includes('dor')){
-    const div=document.createElement('div');
-    div.className='alert';
-    div.innerText='⚠️ Alerta: A criança pode precisar de atenção!';
-    alertasDiv.appendChild(div);
-    iniciarRespiracao();
-  }
-  if(predicaoPreventiva()){
-    const div=document.createElement('div');
-    div.className='alert';
-    div.innerText='⚠️ Possível crise iminente detectada!';
-    alertasDiv.appendChild(div);
-    falarTexto("Atenção! Possível crise iminente.", document.getElementById("idioma").value);
-    iniciarRespiracao();
-  }
-}
-
-function predicaoPreventiva(){
-  if(dadosLogs.length<3) return false;
-  const ultimos=dadosLogs.slice(-3);
-  return ultimos.filter(l=>l.alerta).length>=2;
-}
-
-function iniciarRespiracao(){
-  const respDiv=document.getElementById("respiracao");
-  let cont=0;
-  respDiv.innerText="🌀 Respire fundo...";
-  const intervalo=setInterval(()=>{
-    const fases=["Inspire... 🌬️","Segure... ✋","Expire... 💨","Segure... ✋"];
-    respDiv.innerText=fases[cont%4];
-    cont++;
-    if(cont>11){ clearInterval(intervalo); respDiv.innerText=""; }
-  },2000);
-}
-
-function abrirVersao(versao){
-  versaoAtual=versao;
-  let iframe=document.getElementById("iframeVersao");
-  let links={
-    free:'https://example.com/tecla_free.html',
-    intermediate:'https://example.com/tecla_intermediate.html',
-    premium:'https://gemini.google.com/share/93b267fd56e4',
-  };
-  iframe.src=links[versao];
-  alert('Versão selecionada: '+versao);
-  atualizarHistorico();
-  atualizarGrafico();
-}
-
-function atualizarHistorico(){
-  const lista=document.getElementById("historicoVersoes");
-  lista.innerHTML="";
-  ['free','intermediate','premium'].forEach(v=>{
-    let key="frasesTecla_"+v;
-    let hist=JSON.parse(localStorage.getItem(key))||[];
-    if(hist.length>0){
-      hist.forEach(f=>{
-        const li=document.createElement("li");
-        li.innerText=`[${v}] ${f}`;
-        li.onclick=()=>{ document.getElementById("entrada").value=f; responder(); }
-        lista.appendChild(li);
-      });
+        return { isAlert, score };
     }
-  });
-}
 
-function atualizarGrafico(){
-  const canvas=document.getElementById("graficoAlertas");
-  const ctx=canvas.getContext("2d");
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  let counts={free:0,intermediate:0,premium:0};
-  dadosLogs.forEach(l=>{ if(l.alerta) counts[l.versao]++; });
-  const cores={free:'#4caf50',intermediate:'#ff9800',premium:'#f44336'};
-  let i=0;
-  for(let v in counts){
-    ctx.fillStyle=cores[v];
-    ctx.fillRect(50+i*200,canvas.height-30-counts[v]*20,50,counts[v]*20);
-    ctx.fillStyle="#000";
-    ctx.fillText(v,50+i*200,canvas.height-10);
-    i++;
-  }
-}
+    async function responder() {
+        const entrada = document.getElementById("entrada").value;
+        if (!entrada.trim()) return; // Ignora entradas vazias
+        const idioma = document.getElementById("idioma").value;
+        const saidaDiv = document.getElementById("saida");
+        
+        // 1. Calcula a severidade da frase
+        const { isAlert, score } = calcularSeveridadeAlerta(entrada);
+        
+        // 2. Resposta Imediata da Tecla
+        let resposta = idioma === 'pt-PT'
+            ? `Tecla disse: "${entrada}". Entendemos a sua necessidade com carinho.`
+            : `Tecla said: "${entrada}". We hear your need with care.`;
 
-window.onload=function(){
-  atualizarHistorico();
-  atualizarGrafico();
-};
+        saidaDiv.innerText = resposta;
+        falarTexto(resposta, idioma);
+        
+        // 3. Processamento e Logs
+        salvarFrase(entrada, isAlert, score); // Salva a pontuação
+        processarEntrada(entrada, isAlert); // Dispara alertas e predição
+        
+        // 4. Orientação Dala (só em caso de alerta OU na versão premium)
+        if (isAlert || versaoAtual === 'premium') {
+            await generateDalaInsight(entrada);
+        } else {
+            document.getElementById("dala-insight-text").textContent = "Aguardando a próxima interação para análise.";
+            document.getElementById("orientacaoDala").classList.add('hidden');
+        }
+
+        // 5. Atualizações Visuais
+        atualizarHistorico();
+        atualizarGrafico();
+    }
+
+    function usarFrase(texto){
+        document.getElementById("entrada").value = texto;
+        responder();
+    }
+
+    // -----------------------------------------------------------
+    // 2. INTEGRAÇÃO LLM (Dala)
+    // -----------------------------------------------------------
+    
+    /**
+     * Gera a Orientação Imediata Dala usando a LLM. (Função inalterada)
+     */
+    async function generateDalaInsight(entradaDaCrianca) {
+        const insightDiv = document.getElementById('orientacaoDala');
+        const insightText = document.getElementById('dala-insight-text');
+        
+        insightDiv.classList.remove('hidden');
+        insightText.innerHTML = `<div class="flex items-center space-x-2">
+            <span>Dala está a gerar a Orientação Imediata...</span>
+            <span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span>
+        </div>`;
+        
+        const systemPrompt = "Atue como Dala, um guia compassivo e protetor para terapeutas/cuidadores. Analise a frase da criança e gere uma 'Orientação de Ação Imediata' concisa (máximo 3 frases) e prática. A orientação deve ser focada em validar a emoção da criança e oferecer um primeiro passo de conexão. Use um tom caloroso e de apoio. NUNCA use marcadores, listas ou sub-cabeçalhos.";
+        
+        const userQuery = `A criança disse: "${entradaDaCrianca}". Qual é a Orientação Imediata para o cuidador/terapeuta?`;
+
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+        };
+
+        try {
+            // Lógica de backoff omitida para brevidade, mas deve ser usada em ambiente real
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (text) {
+                insightText.textContent = text;
+            } else {
+                throw new Error("Resposta da LLM vazia.");
+            }
+
+        } catch (error) {
+            console.error("Erro na chamada da API Gemini (Dala):", error);
+            // Implementação de Fallback
+            insightText.innerHTML = `<p class="text-red-600">Falha na comunicação com Dala. Tente novamente ou use a Orientação manual: Ofereça um abraço e pergunte gentilmente "O que podemos fazer juntos agora?".</p>`;
+        }
+    }
+
+    // -----------------------------------------------------------
+    // 3. LÓGICA DE ALERTA, LOGS E PREDIÇÃO AVANÇADA
+    // -----------------------------------------------------------
+
+    function falarTexto(texto, idioma){
+        const synth = window.speechSynthesis;
+        const utterThis = new SpeechSynthesisUtterance(texto);
+        utterThis.lang = idioma;
+        synth.speak(utterThis);
+    }
+
+    function falar(){
+        const idioma = document.getElementById("idioma").value;
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = idioma;
+        recognition.start();
+        recognition.onresult = function(event){
+            const textoFalado = event.results[0][0].transcript;
+            document.getElementById("entrada").value = textoFalado;
+            responder();
+        }
+    }
+
+    function salvarFrase(frase, isAlert, score){
+        // Agora salva a pontuação de severidade também
+        dadosLogs.push({versao: versaoAtual, frase, alerta: isAlert, score: score, timestamp: Date.now()}); 
+        if(dadosLogs.length > MAX_LOGS) dadosLogs.shift();
+    }
+
+    /**
+     * Lógica de Predição Avançada baseada em peso e tempo.
+     * @returns {object} { isTriggered: boolean, score: number }
+     */
+    function predicaoPreventiva(){
+        if(dadosLogs.length === 0) return { isTriggered: false, score: 0 };
+        
+        const agora = Date.now();
+        let pontuacaoTotal = 0;
+        
+        // Filtra logs que ocorreram dentro da janela de tempo (últimos 10 minutos)
+        const logsRecentes = dadosLogs.filter(log => (agora - log.timestamp) <= JANELA_TEMPO_MS);
+        
+        // Soma a pontuação de todos os logs recentes
+        logsRecentes.forEach(log => {
+            pontuacaoTotal += log.score;
+        });
+        
+        const isTriggered = pontuacaoTotal >= LIMITE_PONTUACAO_PREDICAO;
+        
+        return { isTriggered, score: pontuacaoTotal };
+    }
+
+    function processarEntrada(entrada, isAlert){
+        const alertasDiv = document.getElementById("alertas");
+        alertasDiv.innerHTML = ''; // Limpa alertas anteriores
+
+        // 1. Alerta Imediato (Baseado APENAS nesta frase)
+        if(isAlert){
+            const div = document.createElement('div');
+            div.className = 'alert bg-yellow-100 border-yellow-500 text-yellow-700';
+            div.innerText = '⚠️ ALERTA IMEDIATO: A frase contém indicadores de stress ou tristeza.';
+            alertasDiv.appendChild(div);
+            // Inicia a respiração de ancoragem para o cuidador, mesmo que seja só um alerta imediato
+            iniciarRespiracao(); 
+        }
+        
+        // 2. Predição Avançada (Baseada em histórico de 10 minutos)
+        const predicao = predicaoPreventiva();
+
+        if(predicao.isTriggered){
+            const div = document.createElement('div');
+            div.className = 'alert bg-red-100 border-red-500 text-red-700';
+            div.innerText = `🚨 PREDIÇÃO AVANÇADA - RISCO ELEVADO: Acumulou ${predicao.score} pontos de alerta (Limite: ${LIMITE_PONTUACAO_PREDICAO}) nos últimos 10 minutos. Necessário Ancoragem Imediata!`;
+            alertasDiv.appendChild(div);
+            falarTexto("Atenção! Risco de crise elevado!", document.getElementById("idioma").value);
+            // Garante que o processo de respiração é iniciado ou reiniciado
+            iniciarRespiracao(); 
+        }
+    }
+
+    function iniciarRespiracao(){
+        const respDiv = document.getElementById("respiracao");
+        // Verifica se já está em andamento para não iniciar múltiplos timers
+        if(respDiv.dataset.running === 'true') return; 
+
+        respDiv.dataset.running = 'true';
+        let cont = 0;
+        respDiv.innerText = "🌀 Técnica de Ancoragem: Respire fundo, cuidador.";
+        const intervalo = setInterval(()=>{
+            const fases = ["Inspire... (4s) 🌬️","Segure... (4s) ✋","Expire... (4s) 💨","Segure... (4s) ✋"];
+            respDiv.innerText = fases[cont%4];
+            cont++;
+            if(cont > 11){ // Ciclo completo de 3 respirações
+                clearInterval(intervalo); 
+                respDiv.innerText = ""; 
+                respDiv.dataset.running = 'false';
+            }
+        }, 1500); // Intervalo reduzido para simulação rápida
+    }
+
+    // -----------------------------------------------------------
+    // 4. LÓGICA DE VERSÕES E VISUALIZAÇÃO
+    // -----------------------------------------------------------
+
+    function abrirVersao(versao){
+        document.getElementById(`btn-${versaoAtual}`).classList.remove('active');
+        versaoAtual = versao;
+        document.getElementById(`btn-${versaoAtual}`).classList.add('active');
+        
+        let iframe = document.getElementById("iframeVersao");
+        let links = {
+            free:'https://placehold.co/800x300/e0f2fe/1e40af?text=Simulação+Versão+Tecla+GRATUITA',
+            intermediate:'https://placehold.co/800x300/fef3c7/92400e?text=Simulação+Versão+Tecla+INTERMEDIÁRIA',
+            premium:'https://placehold.co/800x300/fee2e2/991b1b?text=Tecla+Premium+-+Recursos+Avançados+Incorporados'
+        };
+        iframe.src = links[versao];
+        
+        console.log(`Versão selecionada: ${versao}`);
+        
+        atualizarHistorico();
+        atualizarGrafico();
+        
+        if (versao === 'premium' && dadosLogs.length > 0) {
+            generateDalaInsight(`(Análise Premium) Revisite a última frase: ${dadosLogs[dadosLogs.length - 1].frase}`);
+        } else {
+             document.getElementById("dala-insight-text").textContent = "Aguardando a próxima interação para análise.";
+             document.getElementById("orientacaoDala").classList.add('hidden');
+        }
+    }
+
+    function atualizarHistorico(){
+        const lista = document.getElementById("historicoVersoes");
+        lista.innerHTML = "";
+        
+        const logsToShow = dadosLogs.slice(-10).reverse(); 
+        
+        logsToShow.forEach(log => {
+            const alertClass = log.alerta ? 'font-bold text-red-700 bg-red-50' : 'text-gray-700';
+            const li = document.createElement("li");
+            li.className = `${alertClass} p-2 rounded-lg hover:bg-gray-200 cursor-pointer text-sm`;
+            // Mostra a pontuação de severidade no histórico
+            li.innerText = `[${log.versao.toUpperCase()}] (Score: ${log.score}) ${log.frase} ${log.alerta ? '🚨' : ''}`;
+            li.onclick = () => { document.getElementById("entrada").value = log.frase; responder(); };
+            lista.appendChild(li);
+        });
+        
+        if (logsToShow.length === 0) {
+            lista.innerHTML = '<li class="text-gray-500">Nenhuma interação registrada ainda.</li>';
+        }
+    }
+
+    function atualizarGrafico(){
+        if (!ctx) return; 
+
+        // Prepara os dados de contagem
+        let counts = {free: 0, intermediate: 0, premium: 0};
+        dadosLogs.forEach(l => { 
+            // Agora conta pela PONTUAÇÃO, não apenas se é um alerta
+            counts[l.versao] += l.score; 
+        });
+        
+        const labels = Object.keys(counts).map(v => v.charAt(0).toUpperCase() + v.slice(1));
+        const dataValues = Object.values(counts);
+        const backgroundColors = Object.values(cores);
+
+        if (chart) {
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Pontuação de Alertas Acumulados',
+                    data: dataValues,
+                    backgroundColor: backgroundColors,
+                    borderColor: backgroundColors.map(c => c.replace('10b981', '059669').replace('f97316', 'c2410c').replace('ef4444', 'b91c1c')), 
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Pontuação Total de Severidade'
+                        },
+                        ticks: {
+                            precision: 0 
+                        }
+                    },
+                    x: {
+                         title: {
+                            display: true,
+                            text: 'Versão Tecla'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    window.onload = function(){
+        // Inicializa o contexto do gráfico
+        ctx = document.getElementById("graficoAlertas").getContext("2d"); 
+
+        const script = document.createElement('script');
+        script.src = "https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js";
+        
+        // Garante que a lógica de inicialização só corre APÓS o Chart.js estar carregado
+        script.onload = () => {
+            document.getElementById("orientacaoDala").classList.add('hidden');
+            // A função abrirVersao chama atualizarGrafico, agora que Chart está definido.
+            abrirVersao('free'); 
+        };
+        document.head.appendChild(script);
+        
+        // A chamada foi movida para dentro de script.onload para resolver o problema de temporização.
+    };
 </script>
 </body>
 </html>
 
-   
