@@ -1,114 +1,153 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧠 Tecla Lite Premium</title>
-  <style>
-    body { font-family: Comic Sans MS, Arial, sans-serif; margin:0; padding:20px; background:#fff9f0; color:#333; }
-    header { text-align:center; padding:10px; background:#4b9cd3; color:white; border-radius:8px; }
-    .container { max-width:650px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-    select, input[type="text"] { width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px; }
-    button { background:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer; }
-    .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
-    .pictograma { flex:1 1 30%; background:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad; }
-    .pictograma:hover { background:#cde9fa; }
-    #saida { margin-top:20px; font-size:20px; color:#222; padding:10px; background:#e6f7ff; border-radius:8px; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tecla Premium</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <!-- MENU LATERAL (3 BARRAS) -->
+  <div id="menuIcon" onclick="toggleMenu()">☰</div>
+
+  <nav id="sideMenu">
+    <h2>📁 Versões da Tecla</h2>
+    <ul>
+      <li><a href="#" onclick="abrirVersao('lite')">🟦 Tecla Lite (Grátis)</a></li>
+      <li><a href="#" onclick="abrirVersao('standard')">🟩 Tecla Standard</a></li>
+      <li><a href="#" onclick="abrirVersao('premium')">🟨 Tecla Premium (Atual)</a></li>
+      <li><a href="#" onclick="abrirVersao('future-ai')">🟥 Tecla Neural Future</a></li>
+    </ul>
+  </nav>
+
+  <!-- CABEÇALHO -->
   <header>
-    <h1>🧠 Tecla Lite</h1>
-    <p>Ferramenta bilíngue com pictogramas e fala para crianças autistas</p>
+    <h1>🧠 Tecla Premium</h1>
+    <p>Assistente cognitivo avançado para autistas — comunicação, calma e prevenção de crises.</p>
   </header>
-  <div class="container">
-    <label for="idioma">🌍 Escolha o idioma:</label>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="container">
+
+    <!-- Idioma -->
+    <label>🌍 Idioma:</label>
     <select id="idioma">
       <option value="pt-PT">Português</option>
       <option value="en-US">English</option>
     </select>
 
-    <label for="entrada">💬 Digite ou fale o que a criança deseja:</label>
-    <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
-    <button onclick="responder()">🔊 Falar</button>
-    <button onclick="falar()">🎙️ Falar com Tecla</button>
+    <!-- Entrada -->
+    <label>💬 Digite ou fale:</label>
+    <input type="text" id="entrada" placeholder="Ex: Quero brincar..." />
 
-    <div class="pictogramas">
-      <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
-      <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
-      <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
-      <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
-      <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
-      <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
+    <div class="btn-row">
+      <button onclick="falarTexto()">🔊 Falar Texto</button>
+      <button onclick="capturarVoz()">🎙️ Microfone</button>
     </div>
 
-    <button onclick="comprarAssinatura()">💎 Assinar Premium</button>
+    <!-- Pictogramas -->
+    <div class="pictogramas">
+      <div class="pictograma" onclick="usar('Quero comer')">🍽️ Comer</div>
+      <div class="pictograma" onclick="usar('Preciso de silêncio')">🔇 Silêncio</div>
+      <div class="pictograma" onclick="usar('Quero brincar')">🧸 Brincar</div>
+      <div class="pictograma" onclick="usar('Estou triste')">😢 Triste</div>
+      <div class="pictograma" onclick="usar('Estou feliz')">😊 Feliz</div>
+      <div class="pictograma" onclick="usar('Estou com dor')">🤕 Dor</div>
+    </div>
 
     <div id="saida"></div>
-  </div>
 
-  <!-- Stripe.js -->
-  <script src="https://js.stripe.com/v3/"></script>
+    <!-- ALERTA DE CRISE -->
+    <div id="alertaCrise">
+      ⚠️ ALTO RISCO DETECTADO — Ativando modo Calma…
+    </div>
+
+    <!-- Sessão de respiração -->
+    <div id="respiracaoGuiada">
+      <h3>🫁 Respiração Guiada</h3>
+      <p id="faseResp"></p>
+    </div>
+
+  </main>
+
+  <!-- LIGAÇÃO AOS MOTORES -->
+  <script type="module" src="app.js"></script>
+
+  <!-- SCRIPT PRINCIPAL DA INTERFACE -->
   <script>
-    const stripe = Stripe("SUA_CHAVE_PUBLICA_DO_STRIPE");
-
-    async function comprarAssinatura() {
-      const response = await fetch("/criar-sessao-stripe", { method: "POST" });
-      const session = await response.json();
-      const result = await stripe.redirectToCheckout({ sessionId: session.id });
-      if(result.error) alert(result.error.message);
+    function toggleMenu() {
+      document.getElementById("sideMenu").classList.toggle("open");
     }
 
-    function responder() {
-      const entrada = document.getElementById("entrada").value;
-      const idioma = document.getElementById("idioma").value;
-      let resposta = idioma === "pt-PT"
-        ? "Tecla disse: '" + entrada + "'. Vamos entender com carinho e atenção."
-        : "Tecla said: '" + entrada + "'. Let's listen with care and love.";
-
-      document.getElementById("saida").innerText = resposta;
-      const synth = window.speechSynthesis;
-      const utterThis = new SpeechSynthesisUtterance(resposta);
-      utterThis.lang = idioma;
-      synth.speak(utterThis);
-
-      salvarFrase(entrada);
+    function abrirVersao(id) {
+      alert("Funcionalidade pronta para receber links reais em produção: " + id);
     }
 
-    function usarFrase(texto) { document.getElementById("entrada").value = texto; responder(); }
-
-    function salvarFrase(frase) {
-      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
-      historico.push(frase);
-      if(historico.length>5) historico.shift();
-      localStorage.setItem("frasesTecla", JSON.stringify(historico));
+    function usar(t) {
+      document.getElementById("entrada").value = t;
+      processar();
     }
 
-    function falar() {
-      const idioma = document.getElementById("idioma").value;
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = idioma;
-      recognition.start();
+    function falarTexto() {
+      const texto = document.getElementById("entrada").value;
+      processar(texto);
+    }
 
-      recognition.onresult = function(event) {
-        const textoFalado = event.results[0][0].transcript;
-        document.getElementById("entrada").value = textoFalado;
-        responder();
+    function capturarVoz() {
+      const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      rec.lang = document.getElementById("idioma").value;
+      rec.start();
+
+      rec.onresult = e => {
+        const txt = e.results[0][0].transcript;
+        document.getElementById("entrada").value = txt;
+        processar(txt);
       };
     }
 
-    window.onload = function() {
-      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
-      if(historico.length > 0) {
-        const sugestoes = historico.map(frase => `<li onclick="document.getElementById('entrada').value='${frase}'">🔁 ${frase}</li>`).join('');
-        const lista = document.createElement("ul");
-        lista.innerHTML = `<strong>💡 Sugestões:</strong>` + sugestoes;
-        lista.style.listStyleType = "none";
-        lista.style.paddingLeft = "0";
-        lista.style.marginTop = "15px";
-        document.querySelector(".container").appendChild(lista);
+    // PROCESSAMENTO (liga à Tecla Engine)
+    function processar() {
+      const texto = document.getElementById("entrada").value;
+      const resultado = window.Tecla.ecp.processar(texto);
+
+      document.getElementById("saida").innerText =
+        `Tecla: "${texto}"\nRisco detectado: ${Math.round(resultado.risco * 100)}%`;
+
+      if (resultado.risco >= 0.6) {
+        document.getElementById("alertaCrise").style.display = "block";
+      } else {
+        document.getElementById("alertaCrise").style.display = "none";
       }
-    };
+    }
+
+    // RESPIRAÇÃO GUIADA – ativada automaticamente pelo Engine
+    window.addEventListener("tecla-breathing-start", () => {
+      iniciarRespiracao();
+    });
+
+    function iniciarRespiracao() {
+      const fase = document.getElementById("faseResp");
+      const box = document.getElementById("respiracaoGuiada");
+      box.style.display = "block";
+
+      let ciclos = ["Inspire…", "Segure…", "Expire lentamente…"];
+      let i = 0;
+
+      const loop = setInterval(() => {
+        fase.innerText = ciclos[i];
+        i++;
+
+        if (i >= ciclos.length) i = 0;
+      }, 3000);
+
+      setTimeout(() => {
+        clearInterval(loop);
+        box.style.display = "none";
+      }, 15000);
+    }
   </script>
+
 </body>
 </html>
+
