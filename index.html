@@ -1,212 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🧠 Tecla Lite Multiusuário + Badges</title>
-<style>
-body { font-family: Comic Sans MS, Arial, sans-serif; margin:0; padding:20px; background-color:#fff9f0; color:#333; }
-header { text-align:center; padding:10px; background-color:#4b9cd3; color:white; border-radius:8px; }
-.container { max-width: 700px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-select, input[type="text"] { width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px; }
-button { background-color:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer; }
-.pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
-.pictograma { flex:1 1 30%; background-color:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad; }
-.pictograma:hover { background-color:#cde9fa; }
-#saida { margin-top:20px; font-size:20px; color:#222; padding:10px; background-color:#e6f7ff; border-radius:8px; }
-#dashboard { margin-top:30px; padding:10px; background:#f0f0f0; border-radius:8px; }
-canvas { margin-top:20px; max-width:100%; }
-#loginSection { margin-bottom:20px; }
-.badges { margin-top:10px; }
-.badge { display:inline-block; padding:5px 10px; background:#FFD700; border-radius:6px; margin-right:5px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tecla Lite Profissional</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f9f9f9; }
+    header { text-align:center; background:#4b9cd3; color:white; padding:15px; border-radius:8px; }
+    .container { max-width:700px; margin:auto; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+    input, select, button { width:100%; padding:12px; margin-top:10px; font-size:16px; border-radius:6px; border:1px solid #ccc; }
+    button { background:#4b9cd3; color:white; border:none; cursor:pointer; }
+    button:hover { background:#367bb5; }
+    .dashboard { margin-top:20px; }
+    .entry { padding:10px; border-bottom:1px solid #ddd; }
+  </style>
 </head>
 <body>
-<header>
-<h1>🧠 Tecla Lite Multiusuário + Badges</h1>
-<p>Ferramenta bilíngue com pictogramas, emoções, gamificação e multiusuários</p>
-</header>
+  <header>
+    <h1>🧠 Tecla Lite Profissional</h1>
+    <p>Interface multiusuário com histórico e recomendações</p>
+  </header>
+  
+  <div class="container">
+    <h2>Login</h2>
+    <select id="perfil">
+      <option value="crianca">Criança</option>
+      <option value="familiar">Familiar/Terapeuta</option>
+    </select>
+    <input type="text" id="nome" placeholder="Nome do usuário">
+    <button onclick="login()">Entrar</button>
 
-<div class="container">
-<div id="loginSection">
-<label>Nome da criança:</label>
-<input type="text" id="usuarioNome" placeholder="Ex: João" />
-<button onclick="loginUsuario()">🔑 Entrar</button>
-</div>
+    <div id="teclaApp" style="display:none;">
+      <h2>Bem-vindo, <span id="usuarioNome"></span></h2>
 
-<label for="idioma">🌍 Escolha o idioma:</label>
-<select id="idioma">
-  <option value="pt-PT">Português</option>
-  <option value="en-US">English</option>
-</select>
+      <label>💬 Frase:</label>
+      <input type="text" id="entrada">
+      <button onclick="responder()">🔊 Falar</button>
 
-<label for="entrada">💬 Digite ou fale o que a criança deseja:</label>
-<input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
-<button onclick="responder()">🔊 Falar</button>
-<button onclick="falar()">🎙️ Falar com Tecla</button>
+      <div class="dashboard" id="dashboard">
+        <h3>📜 Histórico</h3>
+        <div id="historico"></div>
+      </div>
+    </div>
+  </div>
 
-<div class="pictogramas">
-  <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
-  <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
-  <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
-  <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
-  <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
-  <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
-</div>
+  <script>
+    let usuarioAtual = null;
 
-<div id="saida"></div>
+    function login() {
+      const nome = document.getElementById('nome').value.trim();
+      const perfil = document.getElementById('perfil').value;
+      if (!nome) { alert('Digite o nome do usuário'); return; }
 
-<div id="dashboard">
-<h3>📊 Dashboard</h3>
-<div id="contagemEmocoes"></div>
-<div id="pontosAcumulados"></div>
-<div class="badges" id="badgesUsuario"></div>
-<canvas id="graficoEmocoes" width="400" height="200"></canvas>
-</div>
+      usuarioAtual = { nome, perfil };
+      document.getElementById('usuarioNome').innerText = nome;
+      document.querySelector('#teclaApp').style.display = 'block';
+      carregarHistorico();
+    }
 
-<button onclick="exportarJSON()">💾 Exportar JSON</button>
-<button onclick="exportarCSV()">💾 Exportar CSV</button>
+    function salvarHistorico(frase) {
+      let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
+      if (!historico[usuarioAtual.nome]) historico[usuarioAtual.nome] = [];
+      historico[usuarioAtual.nome].push({ frase, timestamp: new Date().toISOString() });
+      localStorage.setItem('historicoTecla', JSON.stringify(historico));
+      carregarHistorico();
+    }
 
-</div>
+    function carregarHistorico() {
+      const historicoDiv = document.getElementById('historico');
+      historicoDiv.innerHTML = '';
+      let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
+      let entradas = historico[usuarioAtual.nome] || [];
+      entradas.slice().reverse().forEach(e => {
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerText = `[${new Date(e.timestamp).toLocaleString()}] ${e.frase}`;
+        historicoDiv.appendChild(div);
+      });
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-let usuarioAtual = null;
-let grafico;
+    function responder() {
+      const entrada = document.getElementById('entrada').value.trim();
+      if (!entrada) return;
+      salvarHistorico(entrada);
 
-// --- Login ---
-function loginUsuario(){
-  const nome = document.getElementById("usuarioNome").value.trim();
-  if(!nome) return alert("Insira o nome da criança!");
-  usuarioAtual = nome;
-  if(!localStorage.getItem("usuariosTecla")) localStorage.setItem("usuariosTecla", JSON.stringify({}));
-  alert(`Bem-vindo, ${usuarioAtual}!`);
-  atualizarDashboard();
-}
+      // Simples recomendação offline
+      let recomendacao = '';
+      if (entrada.includes('triste') || entrada.includes('tristeza')) recomendacao = '💡 Sugestão: Tente uma atividade relaxante ou fale com um familiar.';
+      else if (entrada.includes('feliz')) recomendacao = '💡 Sugestão: Continue a atividade que está a gostar!';
+      else if (entrada.includes('brincar')) recomendacao = '💡 Sugestão: Escolha um brinquedo ou jogo preferido.';
+      else recomendacao = '💡 Sugestão: Observe a criança e interaja conforme necessidade.';
 
-// --- Emoções ---
-function detectarEmocao(texto){
-  const emoLexico = { feliz:["feliz","alegre","sorrindo","contente"], triste:["triste","chateado","infeliz","chorando"], dor:["dor","machucado","ferido","mal"], raiva:["raiva","bravo","irritado"]};
-  texto = texto.toLowerCase();
-  for(let emo in emoLexico) for(let palavra of emoLexico[emo]) if(texto.includes(palavra)) return emo;
-  return "neutro";
-}
+      const utterThis = new SpeechSynthesisUtterance(entrada + ' ' + recomendacao);
+      utterThis.lang = 'pt-PT';
+      window.speechSynthesis.speak(utterThis);
 
-function sugerirFrase(emo,historico=[]){
-  const sugestoes={ feliz:["Que bom!","Vamos brincar!","Isso é ótimo!"], triste:["Tudo vai ficar bem.","Quer um abraço?","Estou aqui contigo."], dor:["Quer ajuda?","Vamos descansar um pouco.","Vou chamar um adulto."], raiva:["Respira fundo.","Vamos acalmar juntos.","Tudo bem sentir raiva."], neutro:["Vamos conversar!"]};
-  let frase = sugestoes[emo] ? sugestoes[emo][Math.floor(Math.random()*sugestoes[emo].length)] : "Vamos conversar!";
-  if(historico.includes(frase)) frase+=" 😊";
-  return frase;
-}
-
-// --- Interações ---
-function salvarInteracao(frase, emo){
-  if(!usuarioAtual) return alert("Por favor faça login primeiro!");
-  let usuarios = JSON.parse(localStorage.getItem("usuariosTecla")) || {};
-  if(!usuarios[usuarioAtual]) usuarios[usuarioAtual] = {interacoes:[], pontos:0, badges:[]};
-  usuarios[usuarioAtual].interacoes.push({timestamp:new Date().toISOString(), frase, emocao:emo});
-  if(usuarios[usuarioAtual].interacoes.length>200) usuarios[usuarioAtual].interacoes.shift();
-  atualizarPontos(usuarios[usuarioAtual], emo);
-  verificarBadges(usuarios[usuarioAtual]);
-  localStorage.setItem("usuariosTecla", JSON.stringify(usuarios));
-  atualizarDashboard();
-}
-
-function atualizarPontos(usuario, emo){
-  if(emo==="feliz") usuario.pontos+=10;
-  else if(emo==="triste") usuario.pontos+=5;
-  else usuario.pontos+=2;
-}
-
-function verificarBadges(usuario){
-  const pontos = usuario.pontos;
-  const badgesPossiveis = [
-    {nome:"🌟 50 Pontos", requisito:50},
-    {nome:"🏆 100 Pontos", requisito:100},
-    {nome:"🎖️ 200 Pontos", requisito:200},
-  ];
-  badgesPossiveis.forEach(b=>{ if(pontos>=b.requisito && !usuario.badges.includes(b.nome)) usuario.badges.push(b.nome); });
-}
-
-// --- Dashboard ---
-function atualizarDashboard(){
-  if(!usuarioAtual) return;
-  let usuarios = JSON.parse(localStorage.getItem("usuariosTecla")) || {};
-  const usuario = usuarios[usuarioAtual] || {interacoes:[], pontos:0, badges:[]};
-  const contagem={feliz:0,triste:0,dor:0,raiva:0,neutro:0};
-  usuario.interacoes.forEach(i=>contagem[i.emocao]=(contagem[i.emocao]||0)+1);
-  document.getElementById("contagemEmocoes").innerText = `Emoções: ${JSON.stringify(contagem)}`;
-  document.getElementById("pontosAcumulados").innerText = `Pontos: ${usuario.pontos}`;
-  document.getElementById("badgesUsuario").innerHTML = usuario.badges.map(b=>`<span class="badge">${b}</span>`).join(" ");
-  atualizarGrafico(contagem);
-}
-
-// --- Gráfico ---
-function atualizarGrafico(contagem){
-  const ctx = document.getElementById('graficoEmocoes').getContext('2d');
-  if(grafico) grafico.destroy();
-  grafico = new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels:Object.keys(contagem),
-      datasets:[{label:'Quantidade de Emoções', data:Object.values(contagem), backgroundColor:['#FFD700','#87CEEB','#FF6347','#FF4500','#C0C0C0']}]
-    },
-    options:{responsive:true, maintainAspectRatio:false}
-  });
-}
-
-// --- Exportação ---
-function exportarJSON(){
-  if(!usuarioAtual) return alert("Faça login para exportar!");
-  let usuarios = JSON.parse(localStorage.getItem("usuariosTecla")) || {};
-  const usuario = usuarios[usuarioAtual] || {interacoes:[]};
-  const blob = new Blob([JSON.stringify(usuario.interacoes, null,2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download=`historico_${usuarioAtual}.json`; a.click();
-  URL.revokeObjectURL(url);
-}
-
-function exportarCSV(){
-  if(!usuarioAtual) return alert("Faça login para exportar!");
-  let usuarios = JSON.parse(localStorage.getItem("usuariosTecla")) || {};
-  const usuario = usuarios[usuarioAtual] || {interacoes:[]};
-  let csv="timestamp,frase,emocao\n";
-  usuario.interacoes.forEach(r=>csv+=`"${r.timestamp}","${r.frase.replace(/"/g,'""')}","${r.emocao}"\n`);
-  const blob = new Blob([csv], {type:"text/csv"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download=`historico_${usuarioAtual}.csv`; a.click();
-  URL.revokeObjectURL(url);
-}
-
-// --- Interação ---
-function responder(){
-  const entrada = document.getElementById("entrada").value;
-  const idioma = document.getElementById("idioma").value;
-  const emo = detectarEmocao(entrada);
-  const fraseSug = sugerirFrase(emo, []);
-  let resposta = idioma==="pt-PT" ? `Tecla disse: '${entrada}'. ${fraseSug}` : `Tecla said: '${entrada}'. ${fraseSug}`;
-  document.getElementById("saida").innerText = resposta;
-  const synth = window.speechSynthesis;
-  const utterThis = new SpeechSynthesisUtterance(resposta);
-  utterThis.lang = idioma;
-  synth.speak(utterThis);
-  salvarInteracao(entrada, emo);
-}
-
-function usarFrase(texto){ document.getElementById("entrada").value = texto; responder(); }
-
-function falar(){
-  const idioma = document.getElementById("idioma").value;
-  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  recognition.lang = idioma;
-  recognition.start();
-  recognition.onresult=function(event){
-    document.getElementById("entrada").value = event.results[0][0].transcript;
-    responder();
-  };
-}
-
-window.onload=function(){ atualizarDashboard(); };
-</script>
+      alert(recomendacao);
+      document.getElementById('entrada').value = '';
+    }
+  </script>
 </body>
 </html>
