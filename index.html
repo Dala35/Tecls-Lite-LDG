@@ -1,180 +1,187 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tecla Premium</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#fff9f0; color:#333;}
-    header { text-align:center; padding:10px; background:#4b9cd3; color:white; border-radius:8px;}
-    .container { max-width:700px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-    select, input[type="text"] { width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px;}
-    button { background:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer;}
-    .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
-    .pictograma { flex:1 1 30%; background:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad;}
-    .pictograma:hover { background:#cde9fa;}
-    #saida { margin-top:20px; font-size:20px; color:#222; padding:10px; background:#e6f7ff; border-radius:8px;}
-    .alert { margin-top:15px; padding:10px; background:#ffcccc; border-radius:8px; font-weight:bold; color:#900;}
-    .barra-versoes { display:flex; justify-content:space-around; margin-top:15px;}
-    .barra { padding:10px; border-radius:8px; cursor:pointer; flex:1; text-align:center; margin:0 5px; color:white; font-weight:bold;}
-    .free { background:#4caf50;}
-    .intermediate { background:#ff9800;}
-    .premium { background:#f44336;}
-    .respiracao { margin-top:15px; font-size:18px; color:#007acc;}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tecla Avançada - Multi Versões</title>
+<style>
+  body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#fff9f0; color:#333;}
+  header { text-align:center; padding:10px; background:#4b9cd3; color:white; border-radius:8px;}
+  .container { max-width:720px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+  select, input[type="text"] { width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px;}
+  button { background:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer;}
+  .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
+  .pictograma { flex:1 1 30%; background:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad;}
+  .pictograma:hover { background:#cde9fa;}
+  #saida { margin-top:20px; font-size:20px; color:#222; padding:10px; background:#e6f7ff; border-radius:8px;}
+  .alert { margin-top:15px; padding:10px; background:#ffcccc; border-radius:8px; font-weight:bold; color:#900;}
+  .barra-versoes { display:flex; justify-content:space-around; margin-top:15px;}
+  .barra { padding:10px; border-radius:8px; cursor:pointer; flex:1; text-align:center; margin:0 5px; color:white; font-weight:bold;}
+  .free { background:#4caf50;}
+  .intermediate { background:#ff9800;}
+  .premium { background:#f44336;}
+  .respiracao { margin-top:15px; font-size:18px; color:#007acc;}
+  .iframe-versao { width:100%; height:400px; margin-top:15px; border:2px solid #4b9cd3; border-radius:8px; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>🧠 Tecla Premium</h1>
-    <p>Interface bilíngue, pictogramas, fala, prevenção de crises e respiração guiada</p>
-  </header>
-  <div class="container">
-    <label for="idioma">🌍 Escolha o idioma:</label>
-    <select id="idioma">
-      <option value="pt-PT">Português</option>
-      <option value="en-US">English</option>
-    </select>
+<header>
+  <h1>🧠 Tecla Avançada</h1>
+  <p>Acesse diferentes versões, histórico completo, alertas e predição preventiva</p>
+</header>
 
-    <label for="entrada">💬 Digite ou fale o que deseja:</label>
-    <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
-    <button onclick="responder()">🔊 Falar</button>
-    <button onclick="falar()">🎙️ Falar com Tecla</button>
+<div class="container">
+  <label for="idioma">🌍 Escolha o idioma:</label>
+  <select id="idioma">
+    <option value="pt-PT">Português</option>
+    <option value="en-US">English</option>
+  </select>
 
-    <div class="pictogramas">
-      <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
-      <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
-      <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
-      <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
-      <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
-      <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
-    </div>
+  <label for="entrada">💬 Digite ou fale o que deseja:</label>
+  <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
+  <button onclick="responder()">🔊 Falar</button>
+  <button onclick="falar()">🎙️ Falar com Tecla</button>
 
-    <div class="barra-versoes">
-      <div class="barra free" onclick="selecionarVersao('free')">Gratuita</div>
-      <div class="barra intermediate" onclick="selecionarVersao('intermediate')">Intermediária</div>
-      <div class="barra premium" onclick="selecionarVersao('premium')">Premium</div>
-    </div>
-
-    <div id="saida"></div>
-    <div id="alertas"></div>
-    <div class="respiracao" id="respiracao"></div>
+  <div class="pictogramas">
+    <div class="pictograma" onclick="usarFrase('Quero comer')">🍽️ Comer</div>
+    <div class="pictograma" onclick="usarFrase('Preciso ir ao banheiro')">🚻 Banheiro</div>
+    <div class="pictograma" onclick="usarFrase('Estou feliz!')">😊 Feliz</div>
+    <div class="pictograma" onclick="usarFrase('Quero brincar')">🧸 Brincar</div>
+    <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
+    <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
   </div>
 
-  <script>
-    let dadosLogs = [];
-    let versaoAtual = 'free';
+  <div class="barra-versoes">
+    <div class="barra free" onclick="abrirVersao('free')">Gratuita</div>
+    <div class="barra intermediate" onclick="abrirVersao('intermediate')">Intermediária</div>
+    <div class="barra premium" onclick="abrirVersao('premium')">Premium</div>
+  </div>
 
-    function responder() {
-      const entrada = document.getElementById("entrada").value;
-      const idioma = document.getElementById("idioma").value;
-      let resposta = idioma === "pt-PT"
-        ? "Tecla disse: '" + entrada + "'. Vamos entender com carinho e atenção."
-        : "Tecla said: '" + entrada + "'. Let's listen with care and love.";
+  <iframe class="iframe-versao" id="iframeVersao"></iframe>
 
-      document.getElementById("saida").innerText = resposta;
-      falarTexto(resposta, idioma);
+  <div id="saida"></div>
+  <div id="alertas"></div>
+  <div class="respiracao" id="respiracao"></div>
+</div>
 
-      salvarFrase(entrada);
-      processarEntrada(entrada);
+<script>
+let versaoAtual = 'free';
+let dadosLogs = [];
+
+function responder() {
+  const entrada = document.getElementById("entrada").value;
+  const idioma = document.getElementById("idioma").value;
+  let resposta = idioma === "pt-PT"
+    ? "Tecla disse: '" + entrada + "'. Vamos entender com carinho e atenção."
+    : "Tecla said: '" + entrada + "'. Let's listen with care and love.";
+
+  document.getElementById("saida").innerText = resposta;
+  falarTexto(resposta, idioma);
+  salvarFrase(entrada);
+  processarEntrada(entrada);
+}
+
+function falarTexto(texto, idioma){
+  const synth = window.speechSynthesis;
+  const utterThis = new SpeechSynthesisUtterance(texto);
+  utterThis.lang = idioma;
+  synth.speak(utterThis);
+}
+
+function usarFrase(texto){
+  document.getElementById("entrada").value = texto;
+  responder();
+}
+
+function salvarFrase(frase){
+  let key = "frasesTecla_" + versaoAtual;
+  let historico = JSON.parse(localStorage.getItem(key)) || [];
+  historico.push(frase);
+  if(historico.length > 5) historico.shift();
+  localStorage.setItem(key, JSON.stringify(historico));
+  dadosLogs.push({ frase, alerta: frase.includes('triste') || frase.includes('dor') });
+}
+
+function falar(){
+  const idioma = document.getElementById("idioma").value;
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = idioma;
+  recognition.start();
+  recognition.onresult = function(event){
+    const textoFalado = event.results[0][0].transcript;
+    document.getElementById("entrada").value = textoFalado;
+    responder();
+  };
+}
+
+function processarEntrada(entrada){
+  const alertasDiv = document.getElementById("alertas");
+  if(entrada.includes('triste') || entrada.includes('dor')){
+    const div = document.createElement('div');
+    div.className='alert';
+    div.innerText='⚠️ Alerta: A criança pode precisar de atenção!';
+    alertasDiv.appendChild(div);
+    iniciarRespiracao();
+  }
+  if(predicaoPreventiva()){
+    const div = document.createElement('div');
+    div.className='alert';
+    div.innerText='⚠️ Possível crise iminente detectada!';
+    alertasDiv.appendChild(div);
+    falarTexto("Atenção! Possível crise iminente.", document.getElementById("idioma").value);
+    iniciarRespiracao();
+  }
+}
+
+function predicaoPreventiva(){
+  if(dadosLogs.length<3) return false;
+  const ultimos = dadosLogs.slice(-3);
+  return ultimos.filter(l=>l.alerta).length >=2;
+}
+
+function iniciarRespiracao(){
+  const respDiv = document.getElementById("respiracao");
+  let cont=0;
+  respDiv.innerText="🌀 Respire fundo...";
+  const intervalo = setInterval(()=>{
+    const fases=["Inspire... 🌬️","Segure... ✋","Expire... 💨","Segure... ✋"];
+    respDiv.innerText = fases[cont%4];
+    cont++;
+    if(cont>11){
+      clearInterval(intervalo);
+      respDiv.innerText="";
     }
+  },2000);
+}
 
-    function falarTexto(texto, idioma){
-      const synth = window.speechSynthesis;
-      const utterThis = new SpeechSynthesisUtterance(texto);
-      utterThis.lang = idioma;
-      synth.speak(utterThis);
-    }
+function abrirVersao(versao){
+  versaoAtual=versao;
+  let iframe = document.getElementById("iframeVersao");
+  let links = {
+    free:'https://example.com/tecla_free.html',
+    intermediate:'https://example.com/tecla_intermediate.html',
+    premium:'https://example.com/tecla_premium.html'
+  };
+  iframe.src = links[versao];
+  alert('Versão selecionada: '+versao);
+}
 
-    function usarFrase(texto) {
-      document.getElementById("entrada").value = texto;
-      responder();
-    }
-
-    function salvarFrase(frase) {
-      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
-      historico.push(frase);
-      if(historico.length > 5) historico.shift();
-      localStorage.setItem("frasesTecla", JSON.stringify(historico));
-      dadosLogs.push({ frase, alerta: frase.includes('triste') || frase.includes('dor') });
-    }
-
-    function falar() {
-      const idioma = document.getElementById("idioma").value;
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = idioma;
-      recognition.start();
-
-      recognition.onresult = function(event) {
-        const textoFalado = event.results[0][0].transcript;
-        document.getElementById("entrada").value = textoFalado;
-        responder();
-      };
-    }
-
-    function processarEntrada(entrada){
-      const alertasDiv = document.getElementById("alertas");
-
-      // Alerta imediato
-      if(entrada.includes('triste') || entrada.includes('dor')){
-        const div = document.createElement('div');
-        div.className = 'alert';
-        div.innerText = '⚠️ Alerta: A criança pode precisar de atenção imediata!';
-        alertasDiv.appendChild(div);
-        iniciarRespiracao();
-      }
-
-      // Predição preventiva
-      if(predicaoPreventiva()){
-        const div = document.createElement('div');
-        div.className = 'alert';
-        div.innerText = '⚠️ Possível crise iminente detectada! Antecipando prevenção.';
-        alertasDiv.appendChild(div);
-        falarTexto("Atenção! Possível crise iminente. Recomenda-se intervenção preventiva.", document.getElementById("idioma").value);
-        iniciarRespiracao();
-      }
-    }
-
-    function predicaoPreventiva() {
-      if(dadosLogs.length < 3) return false;
-      const ultimos = dadosLogs.slice(-3);
-      const risco = ultimos.filter(l => l.alerta).length;
-      return risco >= 2;
-    }
-
-    function iniciarRespiracao(){
-      const respDiv = document.getElementById("respiracao");
-      let cont = 0;
-      respDiv.innerText = "🌀 Respire fundo...";
-
-      const intervalo = setInterval(() => {
-        const fases = ["Inspire... 🌬️","Segure... ✋","Expire... 💨","Segure... ✋"];
-        respDiv.innerText = fases[cont % 4];
-        cont++;
-        if(cont > 11) { // 3 ciclos
-          clearInterval(intervalo);
-          respDiv.innerText = "";
-        }
-      }, 2000);
-    }
-
-    function selecionarVersao(versao){
-      versaoAtual = versao;
-      alert('Versão selecionada: ' + versao);
-      // futuramente aqui você pode controlar acessos e recursos
-    }
-
-    window.onload = function() {
-      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
-      if(historico.length > 0){
-        const sugestoes = historico.map(frase => `<li onclick="document.getElementById('entrada').value='${frase}'">🔁 ${frase}</li>`).join('');
-        const lista = document.createElement("ul");
-        lista.innerHTML = `<strong>💡 Sugestões:</strong>` + sugestoes;
-        lista.style.listStyleType = "none";
-        lista.style.paddingLeft = "0";
-        lista.style.marginTop = "15px";
-        document.querySelector(".container").appendChild(lista);
-      }
-    };
-  </script>
+window.onload=function(){
+  // carregar sugestões da versão atual
+  let key="frasesTecla_" + versaoAtual;
+  let historico = JSON.parse(localStorage.getItem(key)) || [];
+  if(historico.length>0){
+    const sugestoes = historico.map(f=>`<li onclick="document.getElementById('entrada').value='${f}'">🔁 ${f}</li>`).join('');
+    const lista = document.createElement('ul');
+    lista.innerHTML=`<strong>💡 Sugestões:</strong>` + sugestoes;
+    lista.style.listStyleType="none";
+    lista.style.paddingLeft="0";
+    lista.style.marginTop="15px";
+    document.querySelector(".container").appendChild(lista);
+  }
+};
+</script>
 </body>
 </html>
+
+   
