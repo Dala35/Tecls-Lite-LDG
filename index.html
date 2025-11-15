@@ -9,22 +9,26 @@
     <style>
         /* --- VARIÁVEIS CSS (PALETA TECLA) --- */
         :root {
-            --color-primary: #4B9CD3; /* Azul Tecla (Cabeçalho, Botões) */
+            --color-primary: #4B9CD3; /* Azul Tecla (Cabeçalho, Interações) */
             --color-background-soft: #FFF9F0; /* Creme Acolhedor (Fundo principal) */
             --color-background-white: #FFFFFF; /* Branco (Container Principal) */
             --color-text: #222222; /* Texto Padrão */
             --color-dark-menu: #1e2a38; /* Fundo Menu Lateral */
-            --color-alert: #A00000; /* Texto de Alerta */
-            --color-alert-bg: #FFEBEB; /* Fundo de Alerta */
-            --color-success: #2ecc71; /* Cor para sucesso/positivo (Feliz) */
-            --color-warning: #f1c40f; /* Cor para neutro/atenção (Neutra) */
-            --color-danger: #e74c3c; /* Cor para risco/negativo (Triste) */
 
+            /* Cores de Status e Emoções Refatoradas */
+            --color-status-alert: #A00000;      /* Alerta de Risco (Risco Alto) */
+            --color-status-alert-bg: #FFEBEB;   /* Fundo de Alerta */
+            
+            --color-emotion-happy: #2ecc71;     /* Feliz (Sucesso/Positivo) */
+            --color-emotion-sad: #e74c3c;       /* Triste (Risco Médio) */
+            --color-emotion-neutral: #f1c40f;   /* Neutra (Atenção/Warning) */
+            --color-emotion-calm: #1abc9c;      /* Calma (Estabilidade) - NOVO */
+            --color-emotion-play: #4B9CD3;      /* Brincar (Primário) */
+            --color-emotion-need: #9b59b6;      /* Necessidade (Prioridade) */
 
             /* --- VARIÁVEIS DE LAYOUT E ESPAÇAMENTO --- */
             --spacing-large: 25px;
             --spacing-medium: 15px;
-            --border-radius-large: 18px;
             --border-radius-medium: 10px;
             --shadow-soft: 0 8px 30px rgba(0,0,0,0.05);
         }
@@ -165,11 +169,11 @@
         }
         .alert {
             padding: var(--spacing-medium);
-            background: var(--color-alert-bg);
-            color: var(--color-alert);
+            background: var(--color-status-alert-bg);
+            color: var(--color-status-alert);
             margin-bottom: var(--spacing-medium);
             border-radius: var(--border-radius-medium);
-            border-left: 8px solid #FF5A5A; /* Alerta de Crise */
+            border-left: 8px solid var(--color-status-alert); /* Alerta de Crise */
             font-weight: bold;
             box-shadow: 0 2px 5px rgba(255,90,90,0.1);
         }
@@ -196,21 +200,26 @@
         }
         /* Cor de destaque para o Alerta na tabela e no resumo */
         .alerta-true {
-            color: var(--color-alert);
+            color: var(--color-status-alert);
             font-weight: bold;
         }
         .valor-interacoes { color: var(--color-primary); }
-        .valor-alerta { color: var(--color-alert); }
-        /* Cores dinâmicas para a Emoção Principal */
-        .valor-emocao.Feliz { color: var(--color-success); }
-        .valor-emocao.Triste { color: var(--color-danger); }
-        .valor-emocao.Neutra { color: var(--color-warning); }
+        .valor-alerta { color: var(--color-status-alert); }
+        
+        /* Cores dinâmicas para a Emoção Principal - Utilizando as novas variáveis */
+        .valor-emocao.Feliz { color: var(--color-emotion-happy); }
+        .valor-emocao.Triste { color: var(--color-emotion-sad); }
+        .valor-emocao.Neutra { color: var(--color-emotion-neutral); }
+        .valor-emocao.Brincar { color: var(--color-emotion-play); }
+        .valor-emocao.Necessidade { color: var(--color-emotion-need); }
+        .valor-emocao.Calma { color: var(--color-emotion-calm); } /* NOVO */
         .valor-emocao { color: #555; }
 
 
         /* --- RESPONSIVIDADE (MOBILE / TABLET) --- */
         @media (max-width: 900px) {
             .sidebar {
+                /* Sidebar fixo passa a ser estático e horizontal no mobile */
                 position: static; 
                 width: 100%;
                 height: auto;
@@ -235,7 +244,7 @@
                 background: #2c3e50;
             }
             .main-content {
-                margin-left: 0;
+                margin-left: 0; /* Remove o margin do sidebar */
                 padding-top: 20px;
             }
             
@@ -244,7 +253,7 @@
                 flex-direction: column;
             }
 
-            /* Ajuste para rolagem horizontal em tabelas (se necessário) */
+            /* Ajuste para rolagem horizontal em tabelas grandes */
             .card table {
                 display: block;
                 overflow-x: auto;
@@ -337,23 +346,24 @@
             case 'Neutra': return '😐';
             case 'Brincar': return '🧸';
             case 'Necessidade': return '🍴';
+            case 'Calma': return '😌'; // NOVO: ícone para Calma
             default: return '📊';
         }
     }
 
-    // Dados simulados
+    // Dados simulados aprimorados, utilizando os nomes das emoções nas categorias
     const dadosLogs = [
         {hora:'08:15', frase:'Quero brincar', categoria:'Brincar', alerta:false},
-        {hora:'09:05', frase:'Estou triste', categoria:'Emoção', alerta:true},
+        {hora:'09:05', frase:'Estou triste', categoria:'Triste', alerta:true},
+        {hora:'10:00', frase:'Estou calmo hoje', categoria:'Calma', alerta:false}, // Novo log
         {hora:'11:30', frase:'Preciso ir ao banheiro', categoria:'Necessidade', alerta:false},
-        {hora:'13:45', frase:'Estou feliz!', categoria:'Emoção', alerta:false},
+        {hora:'13:45', frase:'Estou feliz!', categoria:'Feliz', alerta:false},
         {hora:'15:10', frase:'Quero comer', categoria:'Necessidade', alerta:false},
-        {hora:'16:20', frase:'Gostei muito disso', categoria:'Emoção', alerta:false},
+        {hora:'16:20', frase:'Gostei muito disso', categoria:'Feliz', alerta:false},
     ];
 
-    // Contagem de emoções baseada nos logs simulados para demonstrar a atualização
-    // Note que "Brincar" e "Necessidade" são tratadas como categorias no log, mas podem ser mapeadas aqui.
-    const emocaoCounts = {Feliz:2, Triste:1, Neutra:0, Brincar:1, Necessidade:2}; 
+    // Contagem de emoções baseada nos logs simulados
+    const emocaoCounts = {Feliz:2, Triste:1, Neutra:0, Brincar:1, Necessidade:2, Calma:1}; 
 
     // Função para encontrar a emoção/categoria principal
     function getEmocaoPrincipal(counts) {
@@ -367,6 +377,17 @@
         }
         return principal;
     }
+
+    // Cores correspondentes às variáveis CSS (para o Chart.js)
+    const emotionColors = {
+        'Feliz': '#2ecc71',
+        'Triste': '#e74c3c',
+        'Neutra': '#f1c40f',
+        'Brincar': '#4B9CD3',
+        'Necessidade': '#9b59b6',
+        'Calma': '#1abc9c'
+    };
+
 
     // Inserir logs e atualizar o resumo ao carregar
     window.onload = function() {
@@ -409,16 +430,21 @@
             alertasDiv.appendChild(div);
         });
 
-        // Gráfico de emoções
+        // Configuração do Gráfico de Emoções
         const ctx = document.getElementById('graficoEmocoes').getContext('2d');
+        const labels = Object.keys(emocaoCounts);
+        const dataValues = Object.values(emocaoCounts);
+        // Mapeia as cores para os dados na ordem correta
+        const backgroundColors = labels.map(label => emotionColors[label] || '#CCCCCC');
+
         new Chart(ctx, {
             type: 'doughnut', /* Donut Chart para um visual limpo */
             data: {
-                labels: Object.keys(emocaoCounts),
+                labels: labels,
                 datasets: [{
                     label: 'Contagem de Emoções',
-                    data: Object.values(emocaoCounts),
-                    backgroundColor: ['#2ecc71', '#e74c3c', '#f1c40f', '#4B9CD3', '#9b59b6', '#3498db'], 
+                    data: dataValues,
+                    backgroundColor: backgroundColors, 
                     hoverOffset: 4
                 }]
             },
