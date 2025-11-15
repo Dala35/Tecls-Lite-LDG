@@ -3,101 +3,175 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tecla Lite Profissional</title>
+  <title>Tecla Lite Avançada</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f9f9f9; }
     header { text-align:center; background:#4b9cd3; color:white; padding:15px; border-radius:8px; }
-    .container { max-width:700px; margin:auto; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+    .container { max-width:900px; margin:auto; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
     input, select, button { width:100%; padding:12px; margin-top:10px; font-size:16px; border-radius:6px; border:1px solid #ccc; }
     button { background:#4b9cd3; color:white; border:none; cursor:pointer; }
     button:hover { background:#367bb5; }
     .dashboard { margin-top:20px; }
     .entry { padding:10px; border-bottom:1px solid #ddd; }
+    canvas { max-width:100%; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🧠 Tecla Lite Profissional</h1>
-    <p>Interface multiusuário com histórico e recomendações</p>
-  </header>
-  
-  <div class="container">
-    <h2>Login</h2>
-    <select id="perfil">
-      <option value="crianca">Criança</option>
-      <option value="familiar">Familiar/Terapeuta</option>
-    </select>
-    <input type="text" id="nome" placeholder="Nome do usuário">
-    <button onclick="login()">Entrar</button>
+<header>
+  <h1>🧠 Tecla Lite Avançada</h1>
+  <p>Interface multiusuário com gráfico de emoções e badges</p>
+</header>
 
-    <div id="teclaApp" style="display:none;">
-      <h2>Bem-vindo, <span id="usuarioNome"></span></h2>
+<div class="container">
+  <h2>Login</h2>
+  <select id="perfil">
+    <option value="crianca">Criança</option>
+    <option value="familiar">Familiar/Terapeuta</option>
+  </select>
+  <input type="text" id="nome" placeholder="Nome do usuário">
+  <button onclick="login()">Entrar</button>
 
-      <label>💬 Frase:</label>
-      <input type="text" id="entrada">
-      <button onclick="responder()">🔊 Falar</button>
+  <div id="teclaApp" style="display:none;">
+    <h2>Bem-vindo, <span id="usuarioNome"></span></h2>
 
-      <div class="dashboard" id="dashboard">
-        <h3>📜 Histórico</h3>
-        <div id="historico"></div>
-      </div>
+    <label>💬 Frase:</label>
+    <input type="text" id="entrada">
+    <button onclick="responder()">🔊 Falar</button>
+    <button onclick="exportarHistorico()">📤 Exportar Histórico</button>
+
+    <div class="dashboard">
+      <h3>📜 Histórico</h3>
+      <div id="historico"></div>
+    </div>
+
+    <div class="dashboard">
+      <h3>📊 Emoções</h3>
+      <canvas id="graficoEmocoes"></canvas>
+    </div>
+
+    <div class="dashboard">
+      <h3>🏆 Conquistas</h3>
+      <ul id="badges"></ul>
     </div>
   </div>
+</div>
 
-  <script>
-    let usuarioAtual = null;
+<script>
+let usuarioAtual = null;
+let emocaoCounts = { feliz:0, triste:0, brincar:0, dor:0 };
 
-    function login() {
-      const nome = document.getElementById('nome').value.trim();
-      const perfil = document.getElementById('perfil').value;
-      if (!nome) { alert('Digite o nome do usuário'); return; }
+function login() {
+  const nome = document.getElementById('nome').value.trim();
+  const perfil = document.getElementById('perfil').value;
+  if (!nome) { alert('Digite o nome do usuário'); return; }
 
-      usuarioAtual = { nome, perfil };
-      document.getElementById('usuarioNome').innerText = nome;
-      document.querySelector('#teclaApp').style.display = 'block';
-      carregarHistorico();
-    }
+  usuarioAtual = { nome, perfil };
+  document.getElementById('usuarioNome').innerText = nome;
+  document.querySelector('#teclaApp').style.display = 'block';
+  carregarHistorico();
+}
 
-    function salvarHistorico(frase) {
-      let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
-      if (!historico[usuarioAtual.nome]) historico[usuarioAtual.nome] = [];
-      historico[usuarioAtual.nome].push({ frase, timestamp: new Date().toISOString() });
-      localStorage.setItem('historicoTecla', JSON.stringify(historico));
-      carregarHistorico();
-    }
+function salvarHistorico(frase) {
+  let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
+  if (!historico[usuarioAtual.nome]) historico[usuarioAtual.nome] = [];
+  historico[usuarioAtual.nome].push({ frase, timestamp: new Date().toISOString() });
+  localStorage.setItem('historicoTecla', JSON.stringify(historico));
+  atualizarEmocoes(frase);
+  carregarHistorico();
+  atualizarBadges();
+}
 
-    function carregarHistorico() {
-      const historicoDiv = document.getElementById('historico');
-      historicoDiv.innerHTML = '';
-      let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
-      let entradas = historico[usuarioAtual.nome] || [];
-      entradas.slice().reverse().forEach(e => {
-        const div = document.createElement('div');
-        div.className = 'entry';
-        div.innerText = `[${new Date(e.timestamp).toLocaleString()}] ${e.frase}`;
-        historicoDiv.appendChild(div);
-      });
-    }
+function carregarHistorico() {
+  const historicoDiv = document.getElementById('historico');
+  historicoDiv.innerHTML = '';
+  let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
+  let entradas = historico[usuarioAtual.nome] || [];
+  entradas.slice().reverse().forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerText = `[${new Date(e.timestamp).toLocaleString()}] ${e.frase}`;
+    historicoDiv.appendChild(div);
+  });
+}
 
-    function responder() {
-      const entrada = document.getElementById('entrada').value.trim();
-      if (!entrada) return;
-      salvarHistorico(entrada);
+function atualizarEmocoes(frase) {
+  if (frase.includes('feliz')) emocaoCounts.feliz++;
+  else if (frase.includes('triste')) emocaoCounts.triste++;
+  else if (frase.includes('brincar')) emocaoCounts.brincar++;
+  else if (frase.includes('dor')) emocaoCounts.dor++;
 
-      // Simples recomendação offline
-      let recomendacao = '';
-      if (entrada.includes('triste') || entrada.includes('tristeza')) recomendacao = '💡 Sugestão: Tente uma atividade relaxante ou fale com um familiar.';
-      else if (entrada.includes('feliz')) recomendacao = '💡 Sugestão: Continue a atividade que está a gostar!';
-      else if (entrada.includes('brincar')) recomendacao = '💡 Sugestão: Escolha um brinquedo ou jogo preferido.';
-      else recomendacao = '💡 Sugestão: Observe a criança e interaja conforme necessidade.';
+  criarGrafico();
+}
 
-      const utterThis = new SpeechSynthesisUtterance(entrada + ' ' + recomendacao);
-      utterThis.lang = 'pt-PT';
-      window.speechSynthesis.speak(utterThis);
+function criarGrafico() {
+  const ctx = document.getElementById('graficoEmocoes').getContext('2d');
+  if (window.graficoEmocoesInstance) window.graficoEmocoesInstance.destroy();
 
-      alert(recomendacao);
-      document.getElementById('entrada').value = '';
-    }
-  </script>
+  window.graficoEmocoesInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Feliz','Triste','Brincar','Dor'],
+      datasets: [{
+        label: 'Ocorrências',
+        data: [emocaoCounts.feliz, emocaoCounts.triste, emocaoCounts.brincar, emocaoCounts.dor],
+        backgroundColor: ['#f1c40f','#3498db','#2ecc71','#e74c3c']
+      }]
+    },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+}
+
+function atualizarBadges() {
+  const badgesDiv = document.getElementById('badges');
+  badgesDiv.innerHTML = '';
+  const badges = [];
+  if (emocaoCounts.feliz >= 3) badges.push('😊 Feliz 3x');
+  if (emocaoCounts.brincar >= 3) badges.push('🧸 Brincou bastante');
+  if (emocaoCounts.triste >= 3) badges.push('😢 Triste 3x');
+
+  badges.forEach(b => {
+    const li = document.createElement('li');
+    li.innerText = b;
+    badgesDiv.appendChild(li);
+  });
+}
+
+function responder() {
+  const entrada = document.getElementById('entrada').value.trim();
+  if (!entrada) return;
+  salvarHistorico(entrada);
+
+  // Recomendações inteligentes simples
+  let recomendacao = '';
+  if (entrada.includes('triste')) recomendacao = '💡 Sugestão: Acalme a criança e ofereça suporte.';
+  else if (entrada.includes('feliz')) recomendacao = '💡 Sugestão: Continue com atividades positivas.';
+  else if (entrada.includes('brincar')) recomendacao = '💡 Sugestão: Ofereça brinquedos preferidos.';
+  else if (entrada.includes('dor')) recomendacao = '💡 Sugestão: Verifique se precisa de ajuda médica.';
+  else recomendacao = '💡 Sugestão: Observe e interaja com cuidado.';
+
+  const utterThis = new SpeechSynthesisUtterance(entrada + ' ' + recomendacao);
+  utterThis.lang = 'pt-PT';
+  window.speechSynthesis.speak(utterThis);
+
+  alert(recomendacao);
+  document.getElementById('entrada').value = '';
+}
+
+function exportarHistorico() {
+  let historico = JSON.parse(localStorage.getItem('historicoTecla')) || {};
+  let entradas = historico[usuarioAtual.nome] || [];
+  if (entradas.length === 0) { alert('Sem histórico para exportar'); return; }
+
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entradas, null, 2));
+  const downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", usuarioAtual.nome + "_historico.json");
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+</script>
 </body>
 </html>
+
