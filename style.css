@@ -1,133 +1,197 @@
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Verdana', sans-serif;
-  background: #f7faff;
-  color: #222;
+    /* Fundo creme suave (#FFF9F0), conforme a descrição anterior,
+       ajustado para ser um pouco mais claro do que o #f7faff para acolhimento */
+    margin: 0;
+    padding: 0;
+    font-family: 'Verdana', sans-serif;
+    background: #FFF9F0; /* Tonalidade acolhedora */
+    color: #222;
+    line-height: 1.6;
 }
 
-/* MENU LATERAL */
-#menuIcon {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  font-size: 30px;
-  cursor: pointer;
-}
-
-#sideMenu {
-  position: fixed;
-  left: -260px;
-  top: 0;
-  width: 250px;
-  height: 100%;
-  background: #1e2a38;
-  color: white;
-  padding: 20px;
-  transition: 0.3s ease;
-}
-
-#sideMenu.open {
-  left: 0;
-}
-
-#sideMenu h2 {
-  margin-top: 0;
-}
-
-#sideMenu ul {
-  list-style: none;
-  padding: 0;
-}
-
-#sideMenu ul li {
-  margin: 15px 0;
-}
-
-#sideMenu ul li a {
-  color: #bfe0ff;
-  text-decoration: none;
-  font-size: 18px;
-}
-
+/* --- HEADER / CABEÇALHO --- */
 header {
-  background: #4b9cd3;
-  color: white;
-  padding: 20px;
-  text-align: center;
+    /* Barra azul clara (#4B9CD3) arredondada, conforme a descrição anterior */
+    background: #4B9CD3; 
+    color: white;
+    padding: 20px;
+    text-align: center;
+    /* Adicionando cantos arredondados inferiores suaves */
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
+/* --- CONTAINER PRINCIPAL --- */
 .container {
-  max-width: 750px;
-  margin: 100px auto 50px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 14px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    /* Estilo de caixa central: fundo branco, sombra suave, cantos arredondados grandes */
+    max-width: 750px;
+    margin: 100px auto 50px auto;
+    background: white;
+    padding: 30px; /* Mais padding para espaçamento */
+    border-radius: 18px; /* Cantos grandes e amigáveis */
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1); /* Sombra mais destacada e suave */
 }
 
+/* --- FORMULÁRIO E INPUTS --- */
 select, input {
-  width: 100%;
-  padding: 14px;
-  font-size: 18px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+    /* Melhoria no visual dos inputs */
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 10px; /* Cantos mais suaves */
+    border: 2px solid #ccc;
+    box-sizing: border-box; /* Garante que padding não estoure a largura */
+    transition: border-color 0.3s;
 }
 
+select:focus, input:focus {
+    border-color: #4B9CD3; /* Foco suavemente azul */
+    outline: none;
+}
+
+/* --- BOTÕES DE AÇÃO --- */
 button {
-  background: #4b9cd3;
-  color: white;
-  padding: 12px 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
+    background: #4B9CD3; /* Azul primário */
+    color: white;
+    padding: 14px 22px; /* Aumentando padding */
+    border: none;
+    border-radius: 10px; /* Cantos arredondados */
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+button:hover {
+    background: #3a7bab; /* Escurece no hover */
 }
 
 .btn-row {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
+    display: flex;
+    gap: 15px; /* Espaço entre botões */
+    margin: 15px 0;
+    justify-content: center;
 }
 
+/* --- PICTOGRAMAS --- */
 .pictogramas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Espaço uniforme */
+    margin-top: 25px;
+    justify-content: center;
 }
 
 .pictograma {
-  flex: 1 1 30%;
-  background: #e1f0fb;
-  text-align: center;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
+    /* Estilo de bloco arredondado e colorido */
+    flex: 1 1 25%; /* Ajuste para ter 3 ou 4 por linha, dependendo do tamanho */
+    min-width: 100px;
+    background: #e1f0fb; /* Fundo azul claro para o pictograma */
+    text-align: center;
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: transform 0.1s, box-shadow 0.2s;
 }
+
+.pictograma:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Efeito de relevo/interação */
+}
+
+/* --- MENU LATERAL (SideMenu) --- */
+#menuIcon {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 100; /* Garante que fique acima de outros elementos */
+    color: white; /* Ícone branco no header azul */
+}
+
+#sideMenu {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background: #1e2a38;
+    color: white;
+    padding: 20px;
+    transition: 0.3s ease;
+    z-index: 99;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+}
+
+#sideMenu.open {
+    left: 0;
+}
+
+#sideMenu h2 {
+    margin-top: 0;
+    color: #bfe0ff;
+}
+
+#sideMenu ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sideMenu ul li {
+    margin: 18px 0;
+}
+
+#sideMenu ul li a {
+    color: #bfe0ff;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.2s;
+}
+
+#sideMenu ul li a:hover {
+    color: white;
+}
+
+/* --- COMPONENTES DE AJUDA --- */
 
 /* ALERTA DE CRISE */
 #alertaCrise {
-  margin-top: 20px;
-  background: #ffe1e1;
-  padding: 10px;
-  color: #b30000;
-  font-size: 18px;
-  border-left: 6px solid #ff5a5a;
-  display: none;
+    margin-top: 25px;
+    background: #ffe1e1;
+    padding: 15px;
+    color: #b30000;
+    font-size: 18px;
+    border-left: 8px solid #ff5a5a;
+    border-radius: 8px;
+    display: none;
+    font-weight: bold;
 }
 
 /* RESPIRAÇÃO GUIADA */
 #respiracaoGuiada {
-  margin-top: 20px;
-  background: #e8fff0;
-  padding: 20px;
-  border-radius: 8px;
-  display: none;
+    margin-top: 25px;
+    background: #e8fff0;
+    padding: 25px;
+    border-radius: 10px;
+    display: none;
+    border: 1px solid #c3e8d2;
 }
 
-/* CALM MODE */
+/* CALM MODE (Baixo Estímulo) */
 .tecla-low-stimulus {
-  background: #dce9f5 !important;
-  transition: 0.3s;
+    /* Efeito de calma: fundo suave e contraste reduzido */
+    background: #dce9f5 !important; 
+    color: #444 !important;
+    transition: 0.3s;
+}
+
+/* Estilo adicional para garantir que o texto do body também mude no Low-Stimulus */
+.tecla-low-stimulus body {
+    background: #dce9f5 !important; 
 }
