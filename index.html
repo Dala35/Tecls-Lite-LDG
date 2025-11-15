@@ -3,91 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tecla Lite LDG</title>
+  <title>🧠 Tecla Lite Avançada</title>
   <style>
-    body {
-      font-family: Comic Sans MS, Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #fff9f0;
-      color: #333;
-    }
-    header {
-      text-align: center;
-      padding: 10px;
-      background-color: #4b9cd3;
-      color: white;
-      border-radius: 8px;
-    }
-    .container {
-      max-width: 650px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 14px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    select, input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      font-size: 18px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    button {
-      background-color: #4b9cd3;
-      color: white;
-      padding: 12px 20px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    .pictogramas {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .pictograma {
-      flex: 1 1 30%;
-      background-color: #e1f0fb;
-      padding: 14px;
-      font-size: 16px;
-      text-align: center;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 1px solid #aad;
-    }
-    .pictograma:hover {
-      background-color: #cde9fa;
-    }
-    #saida {
-      margin-top: 20px;
-      font-size: 20px;
-      color: #222;
-      padding: 10px;
-      background-color: #e6f7ff;
-      border-radius: 8px;
-      min-height: 50px;
-    }
-    #painel {
-      margin-top: 20px;
-      font-family: monospace;
-      white-space: pre;
-      background: #f0f0f0;
-      padding: 10px;
-      border-radius: 8px;
-    }
+    body { font-family: Comic Sans MS, Arial, sans-serif; margin:0; padding:20px; background-color:#fff9f0; color:#333; }
+    header { text-align:center; padding:10px; background-color:#4b9cd3; color:white; border-radius:8px; }
+    .container { max-width: 650px; margin:auto; background:#fff; padding:20px; border-radius:14px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    select, input[type="text"] { width:100%; padding:12px; margin-top:10px; font-size:18px; border:1px solid #ccc; border-radius:8px; }
+    button { background-color:#4b9cd3; color:white; padding:12px 20px; font-size:18px; border:none; border-radius:8px; margin-top:10px; cursor:pointer; }
+    .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+    .pictograma { flex:1 1 30%; background-color:#e1f0fb; padding:14px; font-size:16px; text-align:center; border-radius:8px; cursor:pointer; border:1px solid #aad; }
+    .pictograma:hover { background-color:#cde9fa; }
+    #saida { margin-top:20px; font-size:20px; color:#222; padding:10px; background-color:#e6f7ff; border-radius:8px; }
+    #dashboard { margin-top:30px; padding:10px; background:#f0f0f0; border-radius:8px; }
   </style>
 </head>
 <body>
   <header>
-    <h1>🧠 Tecla Lite LDG</h1>
-    <p>Ferramenta bilíngue com pictogramas, fala e métricas sociais/cognitivas</p>
+    <h1>🧠 Tecla Lite Avançada</h1>
+    <p>Ferramenta bilíngue com pictogramas, fala, emoções e gamificação</p>
   </header>
+
   <div class="container">
     <label for="idioma">🌍 Escolha o idioma:</label>
     <select id="idioma">
@@ -95,7 +30,7 @@
       <option value="en-US">English</option>
     </select>
 
-    <label for="entrada">💬 Digite ou fale o que deseja:</label>
+    <label for="entrada">💬 Digite ou fale o que a criança deseja:</label>
     <input type="text" id="entrada" placeholder="Ex: Quero brincar com o carrinho" />
     <button onclick="responder()">🔊 Falar</button>
     <button onclick="falar()">🎙️ Falar com Tecla</button>
@@ -110,114 +45,108 @@
     </div>
 
     <div id="saida"></div>
-    <div id="painel"></div>
+
+    <div id="dashboard">
+      <h3>📊 Dashboard</h3>
+      <div id="contagemEmocoes"></div>
+      <div id="pontosAcumulados"></div>
+    </div>
   </div>
 
   <script>
-    // Função principal de resposta
-    function responder() {
-      const entrada = document.getElementById("entrada").value.trim();
-      if (!entrada) return;
-
-      const idioma = document.getElementById("idioma").value;
-      const resposta = idioma === "pt-PT"
-        ? `Tecla disse: '${entrada}'. Vamos entender com carinho e atenção.`
-        : `Tecla said: '${entrada}'. Let's listen with care and love.`;
-
-      document.getElementById("saida").innerText = resposta;
-      falarTexto(resposta, idioma);
-      salvarFrase(entrada);
-      salvarNoJSON("entrada", entrada);
-      atualizarPainel();
+    // --- Funções Básicas ---
+    function detectarEmocao(texto) {
+      const emoLexico = {
+        feliz: ["feliz", "alegre", "sorrindo", "contente"],
+        triste: ["triste", "chateado", "infeliz", "chorando"],
+        dor: ["dor", "machucado", "ferido", "mal"],
+        raiva: ["raiva", "bravo", "irritado"]
+      };
+      texto = texto.toLowerCase();
+      for (let emo in emoLexico) {
+        for (let palavra of emoLexico[emo]) if (texto.includes(palavra)) return emo;
+      }
+      return "neutro";
     }
 
-    // Usar frase do pictograma
+    function sugerirFrase(emo, historico=[]) {
+      const sugestoes = {
+        feliz: ["Que bom!", "Vamos brincar!", "Isso é ótimo!"],
+        triste: ["Tudo vai ficar bem.", "Quer um abraço?", "Estou aqui contigo."],
+        dor: ["Quer ajuda?", "Vamos descansar um pouco.", "Vou chamar um adulto."],
+        raiva: ["Respira fundo.", "Vamos acalmar juntos.", "Tudo bem sentir raiva."],
+        neutro: ["Vamos conversar!"]
+      };
+      let frase = sugestoes[emo] ? sugestoes[emo][Math.floor(Math.random()*sugestoes[emo].length)] : "Vamos conversar!";
+      if (historico.includes(frase)) frase += " 😊";
+      return frase;
+    }
+
+    function salvarInteracao(frase, emo) {
+      const registro = { timestamp:new Date().toISOString(), frase, emocao:emo };
+      let historico = JSON.parse(localStorage.getItem("interacoesTecla")) || [];
+      historico.push(registro);
+      if (historico.length>100) historico.shift();
+      localStorage.setItem("interacoesTecla", JSON.stringify(historico));
+      atualizarDashboard();
+    }
+
+    function atualizarPontos(emo) {
+      let pontos = parseInt(localStorage.getItem("pontosTecla")) || 0;
+      if (emo==="feliz") pontos+=10;
+      else if (emo==="triste") pontos+=5;
+      else pontos+=2;
+      localStorage.setItem("pontosTecla", pontos);
+    }
+
+    function atualizarDashboard() {
+      let historico = JSON.parse(localStorage.getItem("interacoesTecla")) || [];
+      const contagem = {feliz:0, triste:0, dor:0, raiva:0, neutro:0};
+      historico.forEach(i=>contagem[i.emocao] = (contagem[i.emocao]||0)+1);
+      document.getElementById("contagemEmocoes").innerHTML = `Emoções: ${JSON.stringify(contagem)}`;
+      document.getElementById("pontosAcumulados").innerHTML = `Pontos: ${localStorage.getItem("pontosTecla")||0}`;
+    }
+
+    function responder() {
+      const entrada = document.getElementById("entrada").value;
+      const idioma = document.getElementById("idioma").value;
+      const emo = detectarEmocao(entrada);
+      const fraseSug = sugerirFrase(emo, []);
+      let resposta = idioma==="pt-PT"
+        ? `Tecla disse: '${entrada}'. ${fraseSug}`
+        : `Tecla said: '${entrada}'. ${fraseSug}`;
+      document.getElementById("saida").innerText = resposta;
+
+      const synth = window.speechSynthesis;
+      const utterThis = new SpeechSynthesisUtterance(resposta);
+      utterThis.lang = idioma;
+      synth.speak(utterThis);
+
+      salvarInteracao(entrada, emo);
+      atualizarPontos(emo);
+    }
+
     function usarFrase(texto) {
       document.getElementById("entrada").value = texto;
       responder();
     }
 
-    // Fala de texto
-    function falarTexto(texto, idioma) {
-      const synth = window.speechSynthesis;
-      const utterThis = new SpeechSynthesisUtterance(texto);
-      utterThis.lang = idioma;
-      synth.speak(utterThis);
-    }
-
-    // Histórico de frases digitadas
-    function salvarFrase(frase) {
-      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
-      historico.push(frase);
-      if (historico.length > 5) historico.shift();
-      localStorage.setItem("frasesTecla", JSON.stringify(historico));
-    }
-
-    // Reconhecimento de fala
     function falar() {
       const idioma = document.getElementById("idioma").value;
       const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
       recognition.lang = idioma;
       recognition.start();
-
-      recognition.onresult = function(event) {
+      recognition.onresult = function(event){
         const textoFalado = event.results[0][0].transcript;
         document.getElementById("entrada").value = textoFalado;
         responder();
       };
     }
 
-    // Função para salvar interações no JSON LDG
-    function salvarNoJSON(tipo, acao) {
-      const dados = {
-        usuario: "Dala_De_Carvalho",
-        sessao: "TeclaLite_LDG_001",
-        ciclo: Date.now(),
-        interacao: {
-          tipo: tipo,
-          acao: acao,
-          dimensoes: {
-            ICN: (Math.random() * 0.5 + 0.5).toFixed(2),  // simula coerência neural
-            EEC: (Math.random() * 0.5 + 0.5).toFixed(2),  // eficiência cognitiva
-            IEE: (Math.random() * 0.5 + 0.5).toFixed(2),  // estabilidade emocional
-            EIS: (Math.random() * 0.5 + 0.5).toFixed(2),  // integração social
-            GCE: 1.0  // conformidade ética sempre 1
-          }
-        }
-      };
-      let historicoJSON = JSON.parse(localStorage.getItem("jsonTecla")) || [];
-      historicoJSON.push(dados);
-      localStorage.setItem("jsonTecla", JSON.stringify(historicoJSON));
-    }
-
-    // Gerar painel de métricas ASCII
-    function atualizarPainel() {
-      let historicoJSON = JSON.parse(localStorage.getItem("jsonTecla")) || [];
-      let painel = historicoJSON.map((item, idx) => {
-        const barrasICN = "█".repeat(Math.round(item.interacao.dimensoes.ICN * 10));
-        const barrasEEC = "█".repeat(Math.round(item.interacao.dimensoes.EEC * 10));
-        const barrasIEE = "█".repeat(Math.round(item.interacao.dimensoes.IEE * 10));
-        const barrasEIS = "█".repeat(Math.round(item.interacao.dimensoes.EIS * 10));
-        return `Ciclo ${idx+1} - ICN:${barrasICN} EEC:${barrasEEC} IEE:${barrasIEE} EIS:${barrasEIS}`;
-      }).join("\n");
-      document.getElementById("painel").innerText = painel;
-    }
-
-    // Inicialização
     window.onload = function() {
-      let historico = JSON.parse(localStorage.getItem("frasesTecla")) || [];
-      if (historico.length > 0) {
-        const sugestoes = historico.map(frase => `<li onclick="document.getElementById('entrada').value='${frase}'; responder()">🔁 ${frase}</li>`).join('');
-        const lista = document.createElement("ul");
-        lista.innerHTML = `<strong>💡 Sugestões:</strong>` + sugestoes;
-        lista.style.listStyleType = "none";
-        lista.style.paddingLeft = "0";
-        lista.style.marginTop = "15px";
-        document.querySelector(".container").appendChild(lista);
-      }
-
-      atualizarPainel();
+      atualizarDashboard();
     };
   </script>
 </body>
 </html>
+
