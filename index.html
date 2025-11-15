@@ -16,7 +16,10 @@
             --color-dark-menu: #1e2a38; /* Fundo Menu Lateral */
             --color-alert: #A00000; /* Texto de Alerta */
             --color-alert-bg: #FFEBEB; /* Fundo de Alerta */
-            --color-success: #2ecc71; /* Cor para sucesso/positivo */
+            --color-success: #2ecc71; /* Cor para sucesso/positivo (Feliz) */
+            --color-warning: #f1c40f; /* Cor para neutro/atenção (Neutra) */
+            --color-danger: #e74c3c; /* Cor para risco/negativo (Triste) */
+
 
             /* --- VARIÁVEIS DE LAYOUT E ESPAÇAMENTO --- */
             --spacing-large: 25px;
@@ -101,7 +104,7 @@
             color: #555;
         }
 
-        /* --- LAYOUT DO PAINEL DE CONTROLE (NOVO: COLUNAS) --- */
+        /* --- LAYOUT DO PAINEL DE CONTROLE (COLUNAS) --- */
         .dashboard-layout {
             display: flex;
             gap: var(--spacing-large);
@@ -118,7 +121,7 @@
             min-width: 0;
         }
 
-        /* --- MINI-CARDS DE RESUMO (NOVO) --- */
+        /* --- MINI-CARDS DE RESUMO --- */
         .mini-card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -198,7 +201,11 @@
         }
         .valor-interacoes { color: var(--color-primary); }
         .valor-alerta { color: var(--color-alert); }
-        .valor-emocao { color: var(--color-success); }
+        /* Cores dinâmicas para a Emoção Principal */
+        .valor-emocao.Feliz { color: var(--color-success); }
+        .valor-emocao.Triste { color: var(--color-danger); }
+        .valor-emocao.Neutra { color: var(--color-warning); }
+        .valor-emocao { color: #555; }
 
 
         /* --- RESPONSIVIDADE (MOBILE / TABLET) --- */
@@ -262,6 +269,7 @@
 <div class="main-content">
     <div class="header">
         <h1>Dashboard Técnico</h1>
+        <!-- O ID do usuário será exibido aqui no futuro com a autenticação Firestore -->
         <div><i class="fas fa-user-circle"></i> Terapeuta</div>
     </div>
 
@@ -285,6 +293,7 @@
         <!-- Emoção Predominante (Este será preenchido pelo JS) -->
         <div class="mini-card">
             <p>Emoção Principal</p>
+            <!-- A classe dinâmica e o conteúdo serão setados via JS -->
             <p class="value valor-emocao" id="emocaoPrincipal">--</p>
         </div>
     </div>
@@ -320,6 +329,18 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+    // Função para mapear a emoção a um ícone
+    function getEmocaoIcon(emocao) {
+        switch (emocao) {
+            case 'Feliz': return '😀';
+            case 'Triste': return '😞';
+            case 'Neutra': return '😐';
+            case 'Brincar': return '🧸';
+            case 'Necessidade': return '🍴';
+            default: return '📊';
+        }
+    }
+
     // Dados simulados
     const dadosLogs = [
         {hora:'08:15', frase:'Quero brincar', categoria:'Brincar', alerta:false},
@@ -330,12 +351,14 @@
         {hora:'16:20', frase:'Gostei muito disso', categoria:'Emoção', alerta:false},
     ];
 
-    const emocaoCounts = {Feliz:3, Triste:1, Neutra:1, Brincar:1}; // Dados mais ricos
+    // Contagem de emoções baseada nos logs simulados para demonstrar a atualização
+    // Note que "Brincar" e "Necessidade" são tratadas como categorias no log, mas podem ser mapeadas aqui.
+    const emocaoCounts = {Feliz:2, Triste:1, Neutra:0, Brincar:1, Necessidade:2}; 
 
-    // Função para encontrar a emoção principal
+    // Função para encontrar a emoção/categoria principal
     function getEmocaoPrincipal(counts) {
-        let maxCount = 0;
-        let principal = '--';
+        let maxCount = -1;
+        let principal = 'Neutra'; // Padrão
         for (const [emocao, count] of Object.entries(counts)) {
             if (count > maxCount) {
                 maxCount = count;
@@ -345,72 +368,69 @@
         return principal;
     }
 
-    // Inserir logs
-    const tabela = document.getElementById('tabelaLogs');
-    dadosLogs.forEach(log => {
-        const tr = document.createElement('tr');
-        // Usando a classe 'alerta-true' para formatar o ícone de alerta
-        const alertaDisplay = log.alerta 
-            ? `<span class="alerta-true"><i class="fas fa-exclamation-triangle"></i></span>` 
-            : '';
+    // Inserir logs e atualizar o resumo ao carregar
+    window.onload = function() {
+        const tabela = document.getElementById('tabelaLogs');
+        dadosLogs.forEach(log => {
+            const tr = document.createElement('tr');
+            const alertaDisplay = log.alerta 
+                ? `<span class="alerta-true"><i class="fas fa-exclamation-triangle"></i></span>` 
+                : '';
+            
+            tr.innerHTML = `
+                <td>${log.hora}</td>
+                <td>${log.frase}</td>
+                <td>${log.categoria}</td>
+                <td>${alertaDisplay}</td>
+            `;
+            tabela.appendChild(tr);
+        });
+
+        // Atualizar resumo (Mini-Cards)
+        const totalInteracoes = dadosLogs.length;
+        const totalAlertas = dadosLogs.filter(l => l.alerta).length;
+        const principalEmocao = getEmocaoPrincipal(emocaoCounts);
+
+        document.getElementById('totalInteracoes').innerText = totalInteracoes;
+        document.getElementById('totalAlertas').innerText = totalAlertas;
         
-        tr.innerHTML = `
-            <td>${log.hora}</td>
-            <td>${log.frase}</td>
-            <td>${log.categoria}</td>
-            <td>${alertaDisplay}</td>
-        `;
-        tabela.appendChild(tr);
-    });
+        // Aplica a classe de cor e o ícone na Emoção Principal
+        const emocaoPrincipalElement = document.getElementById('emocaoPrincipal');
+        emocaoPrincipalElement.innerHTML = `${getEmocaoIcon(principalEmocao)} ${principalEmocao}`;
+        emocaoPrincipalElement.className = `value valor-emocao ${principalEmocao}`;
 
-    // Atualizar resumo (Mini-Cards)
-    document.getElementById('totalInteracoes').innerText = dadosLogs.length;
-    document.getElementById('totalAlertas').innerText = dadosLogs.filter(l => l.alerta).length;
-    document.getElementById('emocaoPrincipal').innerText = getEmocaoPrincipal(emocaoCounts);
 
-    // Alertas no topo
-    const alertasDiv = document.getElementById('alertas');
-    dadosLogs.filter(l => l.alerta).forEach(a => {
-        const div = document.createElement('div');
-        div.className = 'alert';
-        div.innerHTML = `⚠️ **Alerta de Risco Detectado:** A criança expressou **"${a.frase}"** às ${a.hora}.`;
-        alertasDiv.appendChild(div);
-    });
+        // Alertas no topo
+        const alertasDiv = document.getElementById('alertas');
+        dadosLogs.filter(l => l.alerta).forEach(a => {
+            const div = document.createElement('div');
+            div.className = 'alert';
+            div.innerHTML = `⚠️ **Alerta de Risco Detectado:** A criança expressou **"${a.frase}"** às ${a.hora}.`;
+            alertasDiv.appendChild(div);
+        });
 
-    // Gráfico de emoções
-    const ctx = document.getElementById('graficoEmocoes').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut', /* Alterado para Donut Chart para um visual mais limpo */
-        data: {
-            labels: Object.keys(emocaoCounts),
-            datasets: [{
-                label: 'Contagem de Emoções',
-                data: Object.values(emocaoCounts),
-                // Cores suaves e amigáveis, alinhadas ao design Tecla
-                backgroundColor: ['#2ecc71', '#e74c3c', '#f1c40f', '#4B9CD3', '#9b59b6', '#3498db'], 
-                hoverOffset: 4
-            }]
-        },
-        options: { 
-            responsive: true,
-            aspectRatio: 1, /* Mantém proporção quadrada */
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    titleFont: { size: 16 },
-                    bodyFont: { size: 14 }
+        // Gráfico de emoções
+        const ctx = document.getElementById('graficoEmocoes').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut', /* Donut Chart para um visual limpo */
+            data: {
+                labels: Object.keys(emocaoCounts),
+                datasets: [{
+                    label: 'Contagem de Emoções',
+                    data: Object.values(emocaoCounts),
+                    backgroundColor: ['#2ecc71', '#e74c3c', '#f1c40f', '#4B9CD3', '#9b59b6', '#3498db'], 
+                    hoverOffset: 4
+                }]
+            },
+            options: { 
+                responsive: true,
+                aspectRatio: 1, 
+                plugins: {
+                    legend: { position: 'bottom' },
                 }
             }
-        }
-    });
+        });
+    }
 </script>
 
 </body>
