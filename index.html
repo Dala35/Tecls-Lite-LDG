@@ -3,39 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tecla Ultra Avançada</title>
+<title>Tecla Ultra Avançada (Responsiva e Vocal)</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-    body { font-family: 'Inter', sans-serif; margin:0; padding:20px; background:#f8fafc; color:#333; }
-    header { text-align:center; padding:15px; background:#1d4ed8; color:white; border-radius:12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-    .container { max-width:1000px; margin:auto; background:white; padding:30px; border-radius:18px; box-shadow:0 10px 20px rgba(0,0,0,0.05); }
+    /* Estilos base e fontes */
+    body { font-family: 'Inter', sans-serif; margin:0; padding:10px; background:#f8fafc; color:#333; }
+    .container { max-width:1100px; margin:auto; background:white; padding:15px; border-radius:18px; box-shadow:0 10px 20px rgba(0,0,0,0.05); }
+    header { text-align:center; padding:15px; background:#1d4ed8; color:white; border-radius:12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+    
+    /* Inputs e Botões */
     select, input[type="text"] { width:100%; padding:14px; margin-top:10px; font-size:16px; border:2px solid #ccc; border-radius:10px; transition: border-color 0.3s; }
     select:focus, input[type="text"]:focus { border-color: #2563eb; outline: none; }
-    button { background:#2563eb; color:white; padding:14px 25px; font-size:16px; border:none; border-radius:10px; margin-top:10px; cursor:pointer; transition: background-color 0.3s, transform 0.1s; }
+    button { background:#2563eb; color:white; padding:12px 20px; font-size:15px; border:none; border-radius:10px; margin-top:10px; cursor:pointer; transition: background-color 0.3s, transform 0.1s; }
     button:hover { background:#1e40af; }
     button:active { transform: scale(0.98); }
-    .pictogramas { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; justify-content: center; }
-    .pictograma { flex:1 1 30%; max-width: calc(33.33% - 10px); background:#eff6ff; padding:16px; font-size:24px; text-align:center; border-radius:12px; cursor:pointer; border:1px solid #bfdbfe; transition: background-color 0.3s, box-shadow 0.3s; }
+    
+    /* Pictogramas - Otimização Mobile */
+    .pictogramas { display:flex; flex-wrap:wrap; gap:8px; margin-top:15px; justify-content: center; }
+    /* No mobile, 2 itens por linha (aprox 48% da largura) */
+    .pictograma { flex:1 1 calc(50% - 8px); max-width: calc(50% - 8px); background:#eff6ff; padding:12px; font-size:20px; text-align:center; border-radius:12px; cursor:pointer; border:1px solid #bfdbfe; transition: background-color 0.3s, box-shadow 0.3s; }
+    /* No tablet/PC, 3 itens por linha (aprox 31% da largura) */
+    @media (min-width: 640px) {
+        .pictograma { flex:1 1 calc(33.33% - 8px); max-width: calc(33.33% - 8px); padding: 16px; font-size: 24px; }
+    }
     .pictograma:hover { background:#dbeafe; box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2); }
-    #saida, #alertas, #orientacaoDala { margin-top:25px; font-size:18px; padding:20px; border-radius:12px; }
+    
+    /* Feedback Boxes */
+    #saida, #alertas, #orientacaoDala { margin-top:15px; font-size:16px; padding:20px; border-radius:12px; }
     #saida { background:#e0f2fe; color:#0c4a6e; border-left: 5px solid #38bdf8; }
     #alertas { background:#fef3c7; color:#92400e; border-left: 5px solid #fbbf24; }
     #orientacaoDala { background:#ecfdf5; color:#065f46; border-left: 5px solid #10b981; }
     .alert { margin-top:10px; padding:12px; border-radius:8px; font-weight:bold; }
-    .barra-versoes { display:flex; justify-content:space-around; margin-top:25px; gap:10px; }
-    .barra { padding:12px; border-radius:10px; cursor:pointer; flex:1; text-align:center; color:white; font-weight:bold; transition: opacity 0.3s; }
-    .barra.free { background:#10b981;} /* Green */
-    .barra.intermediate { background:#f97316;} /* Orange */
-    .barra.premium { background:#ef4444;} /* Red */
+    
+    /* Barras de Versão */
+    .barra-versoes { display:flex; justify-content:space-around; margin-top:25px; gap:8px; }
+    .barra { padding:12px 8px; border-radius:10px; cursor:pointer; flex:1; text-align:center; color:white; font-weight:bold; transition: opacity 0.3s; font-size: 14px; }
+    @media (min-width: 640px) {
+        .barra { padding:12px 20px; font-size: 16px; }
+    }
+    .barra.free { background:#10b981;} 
+    .barra.intermediate { background:#f97316;} 
+    .barra.premium { background:#ef4444;} 
     .barra:not(.active) { opacity: 0.7; }
     .barra.active { box-shadow: 0 0 0 4px #2563eb; opacity: 1; }
-    .respiracao { margin-top:15px; font-size:18px; font-weight: bold; color:#1e40af; text-align: center; }
-    .iframe-versao { width:100%; height:300px; margin-top:20px; border:2px solid #2563eb; border-radius:12px; }
-    canvas { margin-top:20px; border:1px solid #e5e7eb; border-radius:12px; background:#f9fafb; width: 100%; height: 250px; }
-    #historicoVersoes { margin-top:15px; padding-left:0; list-style:none; }
-    #historicoVersoes li { cursor:pointer; margin-bottom:8px; padding:8px; background:#f3f4f6; border-radius:6px; transition: background-color 0.2s; }
-    #historicoVersoes li:hover { background:#e5e7eb; }
+
+    /* Componente de Respiração (Âncora Vocal) */
+    .respiracao { 
+        margin-top:20px; 
+        padding: 20px;
+        border-radius:12px; 
+        font-weight: bold; 
+        color:white; 
+        background-color: #4f46e5; /* Indigo */
+        text-align: center; 
+        transition: all 0.5s ease-in-out;
+        min-height: 80px;
+    }
     .loading-dot { animation: dot-flicker 1.5s infinite; }
     .loading-dot:nth-child(2) { animation-delay: 0.5s; }
     .loading-dot:nth-child(3) { animation-delay: 1s; }
@@ -43,6 +67,13 @@
         0%, 100% { opacity: 0.3; }
         50% { opacity: 1; }
     }
+
+    /* Histórico de Logs */
+    #historicoVersoes { padding-left:0; list-style:none; max-height: 350px; overflow-y: auto; }
+    
+    /* Gráfico e Iframe */
+    .iframe-versao { width:100%; height:250px; margin-top:20px; border:2px solid #2563eb; border-radius:12px; }
+    canvas { margin-top:15px; border:1px solid #e5e7eb; border-radius:12px; background:#f9fafb; width: 100%; height: 250px; }
 </style>
 </head>
 <body>
@@ -52,7 +83,8 @@
         <p class="text-sm mt-1">Histórico, gráficos de alertas, predição avançada e Orientação Imediata Dala</p>
     </header>
 
-    <div class="mt-8">
+    <!-- Seção Principal de Interação -->
+    <section class="mb-6">
         <label for="idioma" class="text-sm font-medium text-gray-700">🌍 Escolha o idioma:</label>
         <select id="idioma">
             <option value="pt-PT">Português</option>
@@ -74,79 +106,81 @@
             <div class="pictograma" onclick="usarFrase('Estou triste')">😢 Triste</div>
             <div class="pictograma" onclick="usarFrase('Estou com dor')">🤕 Dor</div>
         </div>
+    </section>
 
+    <!-- Exercício de Respiração Vocal (Âncora) -->
+    <div class="respiracao hidden" id="respiracao">
+        <p class="text-2xl font-black">🧘 Guia Vocal de Ancoragem</p>
+    </div>
+
+    <!-- Seção de Feedback e Alertas (Dispersão Zero) -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div id="saida" class="md:col-span-1"></div>
+        <div id="alertas" class="md:col-span-1"></div> 
+        <div id="orientacaoDala" class="md:col-span-1 hidden">
+            <h3 class="font-bold text-lg mb-2 text-green-700">✨ Orientação Imediata Dala</h3>
+            <p id="dala-insight-text" class="text-sm text-green-600 italic">Aguardando a próxima interação para análise.</p>
+        </div>
+    </section>
+    
+    <!-- Seção do Dashboard Técnico -->
+    <section class="mt-8">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">🛠️ Dashboard Técnico e Versões</h2>
+        
         <div class="barra-versoes">
             <div class="barra free active" id="btn-free" onclick="abrirVersao('free')">Gratuita</div>
             <div class="barra intermediate" id="btn-intermediate" onclick="abrirVersao('intermediate')">Intermediária</div>
             <div class="barra premium" id="btn-premium" onclick="abrirVersao('premium')">Premium</div>
         </div>
 
-        <!-- Feedback e Alertas -->
-        <div id="saida"></div>
-        <!-- Alertas Imediatos e de Predição aparecerão aqui -->
-        <div id="alertas"></div> 
-        <div id="orientacaoDala">
-            <h3 class="font-bold text-lg mb-2 text-green-700">✨ Orientação Imediata Dala</h3>
-            <p id="dala-insight-text" class="text-sm text-green-600 italic">Aguardando a próxima interação para análise.</p>
-        </div>
-        <div class="respiracao" id="respiracao"></div>
+        <!-- Iframe da Versão (Estático para simulação) -->
+        <iframe class="iframe-versao" id="iframeVersao" src="https://placehold.co/800x250/e0f2fe/1e40af?text=Simulação+Versão+Tecla+GRATUITA"></iframe>
 
-        <!-- Histórico e Gráfico (Dashboard Técnico) -->
-        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Logs e Gráfico em Layout de Duas Colunas -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
-                <h3 class="text-xl font-bold mb-3 text-gray-700">Log de Histórico (Últimos)</h3>
+                <h3 class="text-xl font-bold mb-3 text-gray-700">Log de Histórico (Últimas 10)</h3>
                 <ul id="historicoVersoes"></ul>
             </div>
+            
             <div>
-                <h3 class="text-xl font-bold mb-3 text-gray-700">Gráfico de Alertos por Versão</h3>
+                <h3 class="text-xl font-bold mb-3 text-gray-700">Gráfico de Pontuação Acumulada</h3>
                 <canvas id="graficoAlertas"></canvas>
             </div>
         </div>
-        
-        <!-- Iframe da Versão (Ainda estático para simulação) -->
-        <iframe class="iframe-versao" id="iframeVersao" src="https://placehold.co/800x300/e0f2fe/1e40af?text=Simulação+Versão+Tecla+GRATUITA"></iframe>
-    </div>
+    </section>
 </div>
 
 <script>
-    // --- CONSTANTES PARA A PREDIÇÃO AVANÇADA ---
-    const JANELA_TEMPO_MS = 10 * 60 * 1000; // 10 minutos em milissegundos (600000ms)
-    const LIMITE_PONTUACAO_PREDICAO = 5; // Pontos para disparar o alerta de risco elevado
+    // --- VARIÁVEIS DE ESTADO ---
+    const JANELA_TEMPO_MS = 10 * 60 * 1000; // 10 minutos
+    const LIMITE_PONTUACAO_PREDICAO = 5; 
+    const ALERTAS_NECESSARIOS_PARA_VOZ = 3; // NOVO: Mínimo de alertas para ativar a âncora vocal
 
-    // Configuração Gemini API
     const apiKey = ""; 
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
     let versaoAtual = 'free';
     let dadosLogs = [];
+    let alertasConsecutivos = 0; // Contador de alertas de stress/tristeza
     const MAX_LOGS = 50; 
     
-    // Variáveis do Gráfico
     let chart;
     let ctx;
     const cores = {free:'#10b981', intermediate:'#f97316', premium:'#ef4444'};
 
     // -----------------------------------------------------------
-    // 1. LÓGICA DE INTERAÇÃO E RESPOSTA
+    // 1. LÓGICA DE UTILIDADES (Calculo e Voz)
     // -----------------------------------------------------------
     
-    /**
-     * Calcula a pontuação de severidade de uma frase e determina se é um alerta simples.
-     */
     function calcularSeveridadeAlerta(frase) {
         const texto = frase.toLowerCase();
         let score = 0;
         let isAlert = false;
 
-        // Define pesos para as palavras-chave (Maior peso = Maior urgência)
         const pesos = {
-            'dor': 3,
-            'triste': 2,
-            'bravo': 1,
-            'irritado': 1,
-            'zangado': 1,
-            'doente': 2,
-            'mal': 1, // Ex: "Estou mal"
+            'dor': 3, 'triste': 2, 'bravo': 1, 'irritado': 1, 'zangado': 1,
+            'doente': 2, 'mal': 1, 'odeio': 2, 'não quero': 1
         };
 
         for (const palavra in pesos) {
@@ -156,26 +190,60 @@
             }
         }
         
-        // Se a criança usar MAIÚSCULAS ou muitos pontos de exclamação, aumenta-se o peso emocional
-        if (frase.toUpperCase() === frase && frase.length > 5) {
-            score += 1;
-        }
-        if ((frase.match(/!/g) || []).length >= 2) {
-            score += 1;
-        }
+        if (frase.toUpperCase() === frase && frase.length > 5) { score += 1; }
+        if ((frase.match(/!/g) || []).length >= 2) { score += 1; }
 
         return { isAlert, score };
     }
 
+    function falarTexto(texto, idioma){
+        const synth = window.speechSynthesis;
+        // Cancela qualquer fala anterior para garantir que as instruções de respiração não se sobreponham
+        synth.cancel(); 
+        const utterThis = new SpeechSynthesisUtterance(texto);
+        utterThis.lang = idioma;
+        synth.speak(utterThis);
+    }
+
+    function falar(){
+        const idioma = document.getElementById("idioma").value;
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        if (!recognition) {
+            alert("Desculpe, o reconhecimento de voz não é suportado no seu navegador.");
+            return;
+        }
+        recognition.lang = idioma;
+        recognition.start();
+        recognition.onresult = function(event){
+            const textoFalado = event.results[0][0].transcript;
+            document.getElementById("entrada").value = textoFalado;
+            responder();
+        }
+    }
+
+
+    // -----------------------------------------------------------
+    // 2. LÓGICA DE INTERAÇÃO E RESPOSTA PRINCIPAL
+    // -----------------------------------------------------------
+    
     async function responder() {
-        const entrada = document.getElementById("entrada").value;
-        if (!entrada.trim()) return; // Ignora entradas vazias
+        const entrada = document.getElementById("entrada").value.trim();
+        if (!entrada) return; 
+
         const idioma = document.getElementById("idioma").value;
         const saidaDiv = document.getElementById("saida");
         
-        // 1. Calcula a severidade da frase
+        // 1. Análise da frase
         const { isAlert, score } = calcularSeveridadeAlerta(entrada);
         
+        // NOVO: Atualiza o contador de alertas consecutivos
+        if (isAlert) {
+            alertasConsecutivos++;
+        } else if (score === 0) {
+            // Frases neutras ou positivas (score 0) resetam o contador
+            alertasConsecutivos = 0; 
+        }
+
         // 2. Resposta Imediata da Tecla
         let resposta = idioma === 'pt-PT'
             ? `Tecla disse: "${entrada}". Entendemos a sua necessidade com carinho.`
@@ -185,20 +253,21 @@
         falarTexto(resposta, idioma);
         
         // 3. Processamento e Logs
-        salvarFrase(entrada, isAlert, score); // Salva a pontuação
-        processarEntrada(entrada, isAlert); // Dispara alertas e predição
+        salvarFrase(entrada, isAlert, score); 
+        processarEntrada(entrada, isAlert); 
         
         // 4. Orientação Dala (só em caso de alerta OU na versão premium)
         if (isAlert || versaoAtual === 'premium') {
             await generateDalaInsight(entrada);
         } else {
-            document.getElementById("dala-insight-text").textContent = "Aguardando a próxima interação para análise.";
             document.getElementById("orientacaoDala").classList.add('hidden');
         }
 
         // 5. Atualizações Visuais
         atualizarHistorico();
-        atualizarGrafico();
+        if (typeof Chart !== 'undefined') { 
+            atualizarGrafico();
+        }
     }
 
     function usarFrase(texto){
@@ -206,19 +275,17 @@
         responder();
     }
 
+
     // -----------------------------------------------------------
-    // 2. INTEGRAÇÃO LLM (Dala)
+    // 3. INTEGRAÇÃO LLM (Dala)
     // -----------------------------------------------------------
     
-    /**
-     * Gera a Orientação Imediata Dala usando a LLM. (Função inalterada)
-     */
     async function generateDalaInsight(entradaDaCrianca) {
         const insightDiv = document.getElementById('orientacaoDala');
         const insightText = document.getElementById('dala-insight-text');
         
         insightDiv.classList.remove('hidden');
-        insightText.innerHTML = `<div class="flex items-center space-x-2">
+        insightText.innerHTML = `<div class="flex items-center space-x-2 text-green-700">
             <span>Dala está a gerar a Orientação Imediata...</span>
             <span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span>
         </div>`;
@@ -233,16 +300,13 @@
         };
 
         try {
-            // Lógica de backoff omitida para brevidade, mas deve ser usada em ambiente real
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
 
             const result = await response.json();
             const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -255,57 +319,29 @@
 
         } catch (error) {
             console.error("Erro na chamada da API Gemini (Dala):", error);
-            // Implementação de Fallback
-            insightText.innerHTML = `<p class="text-red-600">Falha na comunicação com Dala. Tente novamente ou use a Orientação manual: Ofereça um abraço e pergunte gentilmente "O que podemos fazer juntos agora?".</p>`;
+            insightText.innerHTML = `<p class="text-red-600">Falha na comunicação com Dala. Tente reconectar (recarga na Versão Premium).</p>`;
         }
     }
 
+
     // -----------------------------------------------------------
-    // 3. LÓGICA DE ALERTA, LOGS E PREDIÇÃO AVANÇADA
+    // 4. LÓGICA DE ALERTA, PREDIÇÃO E ÂNCORA VOCAL
     // -----------------------------------------------------------
-
-    function falarTexto(texto, idioma){
-        const synth = window.speechSynthesis;
-        const utterThis = new SpeechSynthesisUtterance(texto);
-        utterThis.lang = idioma;
-        synth.speak(utterThis);
-    }
-
-    function falar(){
-        const idioma = document.getElementById("idioma").value;
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = idioma;
-        recognition.start();
-        recognition.onresult = function(event){
-            const textoFalado = event.results[0][0].transcript;
-            document.getElementById("entrada").value = textoFalado;
-            responder();
-        }
-    }
-
+    
     function salvarFrase(frase, isAlert, score){
-        // Agora salva a pontuação de severidade também
         dadosLogs.push({versao: versaoAtual, frase, alerta: isAlert, score: score, timestamp: Date.now()}); 
         if(dadosLogs.length > MAX_LOGS) dadosLogs.shift();
     }
-
-    /**
-     * Lógica de Predição Avançada baseada em peso e tempo.
-     * @returns {object} { isTriggered: boolean, score: number }
-     */
+    
     function predicaoPreventiva(){
         if(dadosLogs.length === 0) return { isTriggered: false, score: 0 };
         
         const agora = Date.now();
         let pontuacaoTotal = 0;
         
-        // Filtra logs que ocorreram dentro da janela de tempo (últimos 10 minutos)
         const logsRecentes = dadosLogs.filter(log => (agora - log.timestamp) <= JANELA_TEMPO_MS);
         
-        // Soma a pontuação de todos os logs recentes
-        logsRecentes.forEach(log => {
-            pontuacaoTotal += log.score;
-        });
+        logsRecentes.forEach(log => { pontuacaoTotal += log.score; });
         
         const isTriggered = pontuacaoTotal >= LIMITE_PONTUACAO_PREDICAO;
         
@@ -314,16 +350,24 @@
 
     function processarEntrada(entrada, isAlert){
         const alertasDiv = document.getElementById("alertas");
-        alertasDiv.innerHTML = ''; // Limpa alertas anteriores
+        alertasDiv.innerHTML = ''; 
 
-        // 1. Alerta Imediato (Baseado APENAS nesta frase)
-        if(isAlert){
-            const div = document.createElement('div');
-            div.className = 'alert bg-yellow-100 border-yellow-500 text-yellow-700';
-            div.innerText = '⚠️ ALERTA IMEDIATO: A frase contém indicadores de stress ou tristeza.';
-            alertasDiv.appendChild(div);
-            // Inicia a respiração de ancoragem para o cuidador, mesmo que seja só um alerta imediato
-            iniciarRespiracao(); 
+        // 1. Lógica da Respiração por Voz (Ativa SOMENTE após 3 alertas consecutivos)
+        if (isAlert) {
+            if (alertasConsecutivos >= ALERTAS_NECESSARIOS_PARA_VOZ) {
+                iniciarRespiracaoVoz(document.getElementById("idioma").value); 
+                alertasConsecutivos = 0; // Reset após o exercício de ancoragem
+                const div = document.createElement('div');
+                div.className = 'alert bg-purple-100 border-purple-500 text-purple-700';
+                div.innerText = `🧘 EXERCÍCIO ATIVADO: ${ALERTAS_NECESSARIOS_PARA_VOZ} alertas consecutivos. Iniciando guia de respiração por voz.`;
+                alertasDiv.appendChild(div);
+            } else {
+                // Alerta Imediato normal, mostrando o contador
+                const div = document.createElement('div');
+                div.className = 'alert bg-yellow-100 border-yellow-500 text-yellow-700';
+                div.innerText = `⚠️ ALERTA IMEDIATO: Indicador de stress/tristeza detectado. Alerta ${alertasConsecutivos} de ${ALERTAS_NECESSARIOS_PARA_VOZ} para ativar o guia vocal.`;
+                alertasDiv.appendChild(div);
+            }
         }
         
         // 2. Predição Avançada (Baseada em histórico de 10 minutos)
@@ -331,62 +375,99 @@
 
         if(predicao.isTriggered){
             const div = document.createElement('div');
-            div.className = 'alert bg-red-100 border-red-500 text-red-700';
-            div.innerText = `🚨 PREDIÇÃO AVANÇADA - RISCO ELEVADO: Acumulou ${predicao.score} pontos de alerta (Limite: ${LIMITE_PONTUACAO_PREDICAO}) nos últimos 10 minutos. Necessário Ancoragem Imediata!`;
+            div.className = 'alert bg-red-100 border-red-500 text-red-700 mt-2';
+            div.innerText = `🚨 PREDIÇÃO AVANÇADA - RISCO ELEVADO: Acumulou ${predicao.score} pontos de alerta nos últimos 10 minutos.`;
             alertasDiv.appendChild(div);
             falarTexto("Atenção! Risco de crise elevado!", document.getElementById("idioma").value);
-            // Garante que o processo de respiração é iniciado ou reiniciado
-            iniciarRespiracao(); 
+        }
+        
+        // 3. Caso Sem Alerta
+        if (!isAlert && !predicao.isTriggered) {
+            alertasDiv.innerHTML = '<p class="text-gray-500">Nenhum alerta imediato ou predição avançada disparada.</p>';
         }
     }
 
-    function iniciarRespiracao(){
+
+    /**
+     * NOVO: Guia de respiração por voz (Texto-para-Voz).
+     */
+    function iniciarRespiracaoVoz(idioma){
         const respDiv = document.getElementById("respiracao");
-        // Verifica se já está em andamento para não iniciar múltiplos timers
         if(respDiv.dataset.running === 'true') return; 
 
         respDiv.dataset.running = 'true';
-        let cont = 0;
-        respDiv.innerText = "🌀 Técnica de Ancoragem: Respire fundo, cuidador.";
-        const intervalo = setInterval(()=>{
-            const fases = ["Inspire... (4s) 🌬️","Segure... (4s) ✋","Expire... (4s) 💨","Segure... (4s) ✋"];
-            respDiv.innerText = fases[cont%4];
-            cont++;
-            if(cont > 11){ // Ciclo completo de 3 respirações
-                clearInterval(intervalo); 
-                respDiv.innerText = ""; 
+        respDiv.classList.remove('hidden');
+
+        const fases = [
+            { text: "Inspire fundo... Pela boca. Um, dois, três, quatro. 🌬️", duration: 4000 },
+            { text: "Segure o ar... Mantenha a calma e o foco. ✋", duration: 4000 },
+            { text: "Expire lentamente pelo nariz. Solte toda a tensão. Um, dois, três, quatro. 💨", duration: 4000 },
+            { text: "Segure por um momento. Relaxe. 🧘", duration: 4000 }
+        ];
+        const totalCycles = 3;
+        let index = 0;
+
+        if (respDiv.dataset.timerId) {
+            clearTimeout(parseInt(respDiv.dataset.timerId));
+        }
+
+        function ciclo() {
+            if (index >= fases.length * totalCycles) { 
+                // Fim do exercício
+                respDiv.innerHTML = `<p class="text-xl font-black">✨ Exercício de respiração concluído. Sinta a calma.</p>`; 
                 respDiv.dataset.running = 'false';
+                respDiv.dataset.timerId = null;
+                setTimeout(() => { respDiv.classList.add('hidden'); }, 5000);
+                return;
             }
-        }, 1500); // Intervalo reduzido para simulação rápida
+
+            const fase = fases[index % fases.length];
+            respDiv.innerHTML = `<p class="text-2xl font-black">${fase.text}</p>`;
+            falarTexto(fase.text, idioma); 
+            
+            index++;
+            
+            const timerId = setTimeout(ciclo, fase.duration);
+            respDiv.dataset.timerId = timerId.toString();
+        }
+        
+        ciclo();
     }
 
     // -----------------------------------------------------------
-    // 4. LÓGICA DE VERSÕES E VISUALIZAÇÃO
+    // 5. LÓGICA DE VISUALIZAÇÃO (Versões, Histórico e Gráfico)
     // -----------------------------------------------------------
 
     function abrirVersao(versao){
-        document.getElementById(`btn-${versaoAtual}`).classList.remove('active');
-        versaoAtual = versao;
-        document.getElementById(`btn-${versaoAtual}`).classList.add('active');
+        // Atualiza botões
+        document.querySelectorAll('.barra').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`btn-${versao}`).classList.add('active');
         
+        versaoAtual = versao;
+        
+        // Atualiza Iframe
         let iframe = document.getElementById("iframeVersao");
         let links = {
-            free:'https://placehold.co/800x300/e0f2fe/1e40af?text=Simulação+Versão+Tecla+GRATUITA',
-            intermediate:'https://placehold.co/800x300/fef3c7/92400e?text=Simulação+Versão+Tecla+INTERMEDIÁRIA',
-            premium:'https://placehold.co/800x300/fee2e2/991b1b?text=Tecla+Premium+-+Recursos+Avançados+Incorporados'
+            free:'https://placehold.co/800x250/e0f2fe/1e40af?text=Simulação+Versão+Tecla+GRATUITA',
+            intermediate:'https://placehold.co/800x250/fef3c7/92400e?text=Simulação+Versão+Tecla+INTERMEDIÁRIA',
+            premium:'https://placehold.co/800x250/fee2e2/991b1b?text=Tecla+Premium+-+Recursos+Avançados+Incorporados'
         };
         iframe.src = links[versao];
         
-        console.log(`Versão selecionada: ${versao}`);
-        
-        atualizarHistorico();
-        atualizarGrafico();
-        
+        // Dispara a análise Dala se for Premium
+        const ultimaFrase = dadosLogs.length > 0 ? dadosLogs[dadosLogs.length - 1].frase : '';
+        const dalaDiv = document.getElementById("orientacaoDala");
         if (versao === 'premium' && dadosLogs.length > 0) {
-            generateDalaInsight(`(Análise Premium) Revisite a última frase: ${dadosLogs[dadosLogs.length - 1].frase}`);
+            dalaDiv.classList.remove('hidden');
+            generateDalaInsight(`(Análise Premium em Versão) Revisite a última frase: ${ultimaFrase}`);
         } else {
+             dalaDiv.classList.add('hidden');
              document.getElementById("dala-insight-text").textContent = "Aguardando a próxima interação para análise.";
-             document.getElementById("orientacaoDala").classList.add('hidden');
+        }
+
+        atualizarHistorico();
+        if (typeof Chart !== 'undefined') { 
+            atualizarGrafico();
         }
     }
 
@@ -397,11 +478,10 @@
         const logsToShow = dadosLogs.slice(-10).reverse(); 
         
         logsToShow.forEach(log => {
-            const alertClass = log.alerta ? 'font-bold text-red-700 bg-red-50' : 'text-gray-700';
+            const alertClass = log.alerta ? 'font-bold text-red-700 bg-red-100' : 'text-gray-700 bg-gray-50';
             const li = document.createElement("li");
             li.className = `${alertClass} p-2 rounded-lg hover:bg-gray-200 cursor-pointer text-sm`;
-            // Mostra a pontuação de severidade no histórico
-            li.innerText = `[${log.versao.toUpperCase()}] (Score: ${log.score}) ${log.frase} ${log.alerta ? '🚨' : ''}`;
+            li.innerHTML = `[${log.versao.toUpperCase()}] <span class="font-mono text-xs px-1 rounded-sm bg-gray-200">Score: ${log.score}</span> ${log.frase} ${log.alerta ? '🚨' : ''}`;
             li.onclick = () => { document.getElementById("entrada").value = log.frase; responder(); };
             lista.appendChild(li);
         });
@@ -412,22 +492,16 @@
     }
 
     function atualizarGrafico(){
-        if (!ctx) return; 
+        if (!ctx || typeof Chart === 'undefined') { return; }
 
-        // Prepara os dados de contagem
         let counts = {free: 0, intermediate: 0, premium: 0};
-        dadosLogs.forEach(l => { 
-            // Agora conta pela PONTUAÇÃO, não apenas se é um alerta
-            counts[l.versao] += l.score; 
-        });
+        dadosLogs.forEach(l => { counts[l.versao] += l.score; });
         
         const labels = Object.keys(counts).map(v => v.charAt(0).toUpperCase() + v.slice(1));
         const dataValues = Object.values(counts);
         const backgroundColors = Object.values(cores);
 
-        if (chart) {
-            chart.destroy();
-        }
+        if (chart) { chart.destroy(); }
 
         chart = new Chart(ctx, {
             type: 'bar',
@@ -447,48 +521,35 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Pontuação Total de Severidade'
-                        },
-                        ticks: {
-                            precision: 0 
-                        }
+                        title: { display: true, text: 'Pontuação Total de Severidade' },
+                        ticks: { precision: 0 }
                     },
-                    x: {
-                         title: {
-                            display: true,
-                            text: 'Versão Tecla'
-                        }
-                    }
+                    x: { title: { display: true, text: 'Versão Tecla' } }
                 },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
+                plugins: { legend: { display: false } }
             }
         });
     }
 
+    // -----------------------------------------------------------
+    // 6. INICIALIZAÇÃO
+    // -----------------------------------------------------------
+
     window.onload = function(){
-        // Inicializa o contexto do gráfico
         ctx = document.getElementById("graficoAlertas").getContext("2d"); 
 
         const script = document.createElement('script');
         script.src = "https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js";
         
-        // Garante que a lógica de inicialização só corre APÓS o Chart.js estar carregado
         script.onload = () => {
             document.getElementById("orientacaoDala").classList.add('hidden');
-            // A função abrirVersao chama atualizarGrafico, agora que Chart está definido.
             abrirVersao('free'); 
         };
-        document.head.appendChild(script);
         
-        // A chamada foi movida para dentro de script.onload para resolver o problema de temporização.
+        document.head.appendChild(script);
     };
 </script>
 </body>
 </html>
-
+            
+            
